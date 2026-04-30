@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stevie — Japan Tour 2025 · Booking Tracker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --red:#E3350D;--darkred:#8B0000;--yellow:#FFD700;--darkyellow:#B8860B;
+  --blue:#0075BE;--darkblue:#003A6B;--green:#1A9F2E;--darkgreen:#0D5C19;
+  --white:#FFFDE7;--cream:#FFF9C4;--lightgray:#F0EDD8;--gray:#C8C49A;
+  --darkgray:#5A5540;--black:#1A1209;
+  --pixel:1px solid var(--black);
+  --pixel2:2px solid var(--black);
+  --pixel3:3px solid var(--black);
+  --shadow:3px 3px 0 var(--black);
+  --font:'Press Start 2P',monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;image-rendering:pixelated}
+body{
+  font-family:var(--font);
+  background:var(--darkblue);
+  color:var(--black);
+  background-image:
+    radial-gradient(circle at 20% 50%,rgba(0,117,190,0.3) 0%,transparent 50%),
+    radial-gradient(circle at 80% 20%,rgba(227,53,13,0.2) 0%,transparent 40%);
+  min-height:100vh;
+}
+.page{max-width:1180px;margin:0 auto;padding:1.5rem}
+
+/* HEADER */
+.hdr{
+  padding:0 0 1rem;margin-bottom:1.5rem;
+  display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;
+  border-bottom:4px solid var(--yellow);
+}
+.hdr h1{font-size:16px;color:var(--yellow);text-shadow:2px 2px 0 var(--darkyellow);letter-spacing:1px;line-height:1.5}
+.hdr h1 span{color:var(--red);text-shadow:2px 2px 0 var(--darkred)}
+.hdr p{font-size:9px;color:var(--gray);margin-top:8px;letter-spacing:.5px;line-height:1.8}
+.hbtns{display:flex;gap:8px;flex-wrap:wrap}
+
+/* BUTTONS */
+.btn{
+  font-family:var(--font);font-size:9px;padding:10px 14px;cursor:pointer;
+  border:var(--pixel2);background:var(--lightgray);color:var(--black);
+  box-shadow:var(--shadow);text-transform:uppercase;letter-spacing:.5px;
+  transition:transform .1s,box-shadow .1s;
+}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--black)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--black)}
+.btn-dk{background:var(--darkblue);color:var(--yellow);border-color:var(--yellow)}
+.btn-dk:hover{background:var(--blue)}
+.btn-gd{background:var(--red);color:var(--yellow);border-color:var(--yellow)}
+.btn-gd:hover{background:var(--darkred)}
+
+/* TIMELINE */
+.tline{
+  background:var(--darkblue);border:var(--pixel3);border-color:var(--yellow);
+  padding:16px 18px;margin-bottom:1.25rem;box-shadow:var(--shadow);
+}
+.tline::before{content:'★ TOUR SCHEDULE ★';font-family:var(--font);font-size:8px;color:var(--yellow);letter-spacing:1px;display:block;margin-bottom:12px}
+.tline h3{display:none}
+.tdates{display:flex;gap:7px;flex-wrap:wrap}
+.td{
+  padding:7px 10px;font-family:var(--font);font-size:8px;
+  border:var(--pixel);background:var(--darkgray);color:var(--gray);
+  text-transform:uppercase;letter-spacing:.3px;
+}
+.td.s{background:var(--green);color:var(--white);border-color:var(--darkgreen)}
+.td.f{background:var(--red);color:var(--yellow);border-color:var(--darkred)}
+.td.t{background:var(--blue);color:var(--white);border-color:var(--darkblue)}
+.tdf{cursor:pointer;transition:transform .1s,box-shadow .1s}.tdf:hover{transform:translate(-1px,-1px);box-shadow:2px 2px 0 var(--black)}
+.tdf.active{background:var(--red)!important;color:var(--yellow)!important;border-color:var(--darkred)!important;box-shadow:none!important;transform:translate(2px,2px)!important}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:1.25rem}
+@media(max-width:700px){.stats{grid-template-columns:repeat(3,1fr)}}
+.sc{
+  background:var(--darkblue);border:var(--pixel2);border-color:var(--yellow);
+  padding:12px 14px;box-shadow:var(--shadow);
+}
+.sl{font-family:var(--font);font-size:7px;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;line-height:1.6}
+.sv{font-family:var(--font);font-size:22px;color:var(--white)}
+.sv.g{color:var(--green)}
+.pb{height:6px;background:var(--darkgray);border:var(--pixel);margin-top:8px}
+.pf{height:100%;background:var(--green);transition:width .4s}
+
+/* CONTROLS */
+.ctrls{display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap}
+.ctrls input,.ctrls select{
+  font-family:var(--font);font-size:8px;padding:10px 12px;
+  border:var(--pixel2);background:var(--cream);color:var(--black);
+  height:40px;outline:none;letter-spacing:.3px;
+}
+.ctrls input{flex:1;min-width:160px}
+.ctrls input:focus,.ctrls select:focus{border-color:var(--red);background:var(--white)}
+
+/* CITY */
+.city{margin-bottom:1.5rem}.city.hidden{display:none}
+.clbl{
+  font-family:var(--font);font-size:10px;color:var(--yellow);
+  text-transform:uppercase;letter-spacing:1px;
+  padding:10px 14px;margin-bottom:10px;
+  background:var(--darkblue);border:var(--pixel2);border-color:var(--yellow);
+  box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:12px;
+}
+.clbl .cnt{font-size:8px;color:var(--gray);letter-spacing:.3px}
+.clbl .dh{font-size:8px;color:var(--red);background:rgba(255,215,0,.15);padding:3px 8px;border:1px solid var(--yellow)}
+
+/* VENUE WRAP */
+.vw{margin-bottom:10px}.vw.hidden{display:none}
+.vr{
+  display:grid;grid-template-columns:2fr 1.1fr .8fr 1fr auto auto;
+  gap:8px;align-items:center;
+  padding:12px 16px;
+  background:var(--cream);border:var(--pixel2);
+  box-shadow:var(--shadow);
+}
+.vr:hover{background:var(--white);transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--black)}
+@media(max-width:900px){.vr{grid-template-columns:1fr 1fr}}
+.vn{font-family:var(--font);font-size:10px;color:var(--black);letter-spacing:.3px;line-height:1.5;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.vm{font-size:8px;color:var(--darkgray);margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-family:var(--font);line-height:1.8}
+
+/* BADGES */
+.badge{font-family:var(--font);font-size:7px;padding:4px 7px;letter-spacing:.3px;border:var(--pixel)}
+.bt{background:var(--yellow);color:var(--darkred);border-color:var(--darkyellow)}
+.bl{background:var(--blue);color:var(--white);border-color:var(--darkblue)}
+.be{background:var(--green);color:var(--white);border-color:var(--darkgreen)}
+.bn{background:var(--red);color:var(--yellow);border-color:var(--darkred)}
+
+/* STATUS SELECT */
+.ssel{
+  font-family:var(--font);font-size:8px;padding:7px 8px;
+  border:var(--pixel2);cursor:pointer;width:100%;outline:none;letter-spacing:.2px;
+}
+.psel{
+  font-family:var(--font);font-size:8px;padding:7px 8px;
+  border:var(--pixel2);background:var(--cream);color:var(--black);
+  width:100%;outline:none;
+}
+.sdc{font-family:var(--font);font-size:8px;color:var(--darkgray);line-height:1.6}
+.sdc strong{color:var(--black)}
+
+/* TOGGLE BUTTONS */
+.tog{
+  font-family:var(--font);font-size:8px;padding:8px 10px;cursor:pointer;
+  white-space:nowrap;border:var(--pixel2);letter-spacing:.3px;
+  box-shadow:2px 2px 0 var(--black);transition:transform .1s,box-shadow .1s;
+  text-transform:uppercase;
+}
+.tog:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--black)}
+.ntog{background:var(--lightgray);color:var(--black)}
+.ntog:hover{background:var(--cream)}
+.ntog.has{background:var(--yellow);color:var(--darkred);border-color:var(--darkyellow)}
+.etog{background:var(--blue);color:var(--white);border-color:var(--darkblue)}
+.etog:hover{background:var(--darkblue)}
+
+/* PANELS */
+.panel{display:none}.panel.open{display:block}
+
+/* NOTES PANEL */
+.np{
+  padding:16px;
+  background:var(--cream);border:var(--pixel2);border-top:4px dashed var(--gray);
+}
+.tip{
+  background:var(--yellow);border:var(--pixel2);border-color:var(--darkyellow);
+  padding:10px 12px;font-family:var(--font);font-size:8px;color:var(--black);
+  margin-bottom:12px;box-shadow:2px 2px 0 var(--darkyellow);line-height:1.8;
+}
+.tip b{color:var(--darkred)}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+@media(max-width:600px){.cgrid{grid-template-columns:1fr}}
+.cb{background:var(--white);border:var(--pixel2);padding:12px 14px}
+.cb h4{font-family:var(--font);font-size:8px;color:var(--darkgray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--gray)}
+.ci{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-family:var(--font);font-size:8px;color:var(--black);line-height:1.6}
+.ci a{color:var(--blue);text-decoration:none;word-break:break-all}
+.ci a:hover{color:var(--red);text-decoration:underline}
+.ico{width:14px;height:14px;flex-shrink:0;opacity:.7}
+.drow{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.dg{display:flex;align-items:center;gap:7px}
+.dg label{font-family:var(--font);font-size:8px;color:var(--darkgray);white-space:nowrap}
+.dg input[type=date]{
+  font-family:var(--font);font-size:8px;padding:6px 8px;
+  border:var(--pixel2);background:var(--white);color:var(--black);outline:none;height:32px;
+}
+.np textarea{
+  width:100%;font-family:var(--font);font-size:8px;padding:10px;
+  border:var(--pixel2);background:var(--white);color:var(--black);
+  resize:vertical;min-height:64px;outline:none;line-height:1.9;
+}
+.np textarea:focus{border-color:var(--red)}
+
+/* EMAIL PANEL */
+.ep{
+  background:var(--white);border:var(--pixel2);border-top:4px solid var(--red);padding:16px;
+}
+.etabs{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.etab{
+  font-family:var(--font);font-size:8px;padding:8px 12px;
+  border:var(--pixel2);background:var(--lightgray);color:var(--black);cursor:pointer;
+  letter-spacing:.3px;text-transform:uppercase;
+  box-shadow:2px 2px 0 var(--black);
+}
+.etab:hover{background:var(--cream)}
+.etab.active{background:var(--red);color:var(--yellow);border-color:var(--darkred);box-shadow:none;transform:translate(2px,2px)}
+.etab.fu{background:var(--blue);color:var(--white);border-color:var(--darkblue)}
+.etab.fu:hover{background:var(--darkblue)}
+.etab.fu.active{background:var(--darkblue);box-shadow:none;transform:translate(2px,2px)}
+.eblk{display:none}.eblk.active{display:block}
+.esr{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
+.esl{font-family:var(--font);font-size:8px;color:var(--darkgray);min-width:58px;padding-top:2px;flex-shrink:0;text-transform:uppercase}
+.esv{font-family:var(--font);font-size:9px;font-weight:bold;color:var(--black);flex:1;line-height:1.7}
+.ebody{
+  font-family:var(--font);font-size:9px;color:var(--black);line-height:2;
+  background:var(--cream);border:var(--pixel2);padding:14px 16px;
+  white-space:pre-wrap;word-break:break-word;min-height:60px;
+}
+.eedit{
+  width:100%;font-family:var(--font);font-size:9px;line-height:2;
+  background:var(--cream);border:var(--pixel2);border-color:var(--red);
+  padding:14px 16px;color:var(--black);resize:vertical;min-height:220px;outline:none;
+}
+.eact{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.cpybtn{
+  font-family:var(--font);font-size:8px;padding:9px 14px;
+  border:var(--pixel2);background:var(--blue);color:var(--white);border-color:var(--darkblue);
+  cursor:pointer;letter-spacing:.3px;box-shadow:2px 2px 0 var(--black);text-transform:uppercase;
+}
+.cpybtn:hover{background:var(--darkblue)}
+.cpybtn:active{transform:translate(2px,2px);box-shadow:none}
+.cpybtn.ok{background:var(--green);border-color:var(--darkgreen)}
+.editbtn{
+  font-family:var(--font);font-size:8px;padding:9px 14px;
+  border:var(--pixel2);background:var(--lightgray);color:var(--black);
+  cursor:pointer;letter-spacing:.3px;box-shadow:2px 2px 0 var(--black);text-transform:uppercase;
+}
+.editbtn:hover{background:var(--cream)}
+.editbtn:active{transform:translate(2px,2px);box-shadow:none}
+.savebtn{
+  font-family:var(--font);font-size:8px;padding:9px 14px;
+  border:var(--pixel2);background:var(--green);color:var(--white);border-color:var(--darkgreen);
+  cursor:pointer;letter-spacing:.3px;box-shadow:2px 2px 0 var(--black);text-transform:uppercase;
+}
+.savebtn:hover{background:var(--darkgreen)}
+.savebtn:active{transform:translate(2px,2px);box-shadow:none}
+.fubadge{
+  font-family:var(--font);font-size:7px;
+  background:var(--blue);color:var(--white);
+  padding:4px 10px;border:var(--pixel);border-color:var(--darkblue);
+  display:inline-block;margin-bottom:12px;letter-spacing:.3px;
+}
+.tls{font-family:var(--font);font-size:7px;color:var(--gray);display:flex;align-items:center;gap:6px}
+.tld{width:9px;height:9px;background:var(--darkgray);border:var(--pixel);display:inline-block;flex-shrink:0}
+.tld.spin{background:var(--yellow);animation:blink .5s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.tld.done{background:var(--green);border-color:var(--darkgreen)}
+.tld.err{background:var(--red);border-color:var(--darkred)}
+
+.pokeball-icon{display:inline-block;width:12px;height:12px;border-radius:50%;
+  background:linear-gradient(180deg,var(--red) 50%,var(--white) 50%);
+  border:2px solid var(--black);vertical-align:middle;margin-right:8px;
+}
+
+.epk-tab-wrap{background:var(--darkblue);border:var(--pixel2);border-color:var(--yellow);border-top:4px solid var(--yellow);padding:16px}
+.epk-switcher{display:flex;gap:6px;margin-bottom:14px}
+.epk-sw-btn{font-family:var(--font);font-size:8px;padding:7px 12px;border:var(--pixel2);cursor:pointer;letter-spacing:.3px;text-transform:uppercase;box-shadow:2px 2px 0 var(--black)}
+.epk-sw-btn.active{background:var(--yellow);color:var(--darkred);border-color:var(--darkyellow);box-shadow:none;transform:translate(2px,2px)}
+.epk-sw-btn:not(.active){background:var(--darkgray);color:var(--gray);border-color:var(--black)}
+.epk-pane{display:none}.epk-pane.active{display:block}
+.epk-section{margin-bottom:14px}
+.epk-label{font-family:var(--font);font-size:7px;color:var(--yellow);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid var(--darkyellow)}
+.epk-bio{font-family:var(--font);font-size:7px;color:var(--white);line-height:2;background:rgba(0,0,0,.3);padding:10px 12px;border:var(--pixel);border-color:var(--darkgray)}
+.epk-stats{display:flex;flex-wrap:wrap;gap:6px}
+.epk-stat{font-family:var(--font);font-size:7px;padding:5px 9px;background:var(--green);color:var(--white);border:var(--pixel);border-color:var(--darkgreen)}
+.epk-links{display:flex;flex-direction:column;gap:5px}
+.epk-link{font-family:var(--font);font-size:7px;color:var(--yellow);text-decoration:none;padding:4px 8px;background:rgba(255,215,0,.1);border:var(--pixel);border-color:var(--darkyellow);display:flex;justify-content:space-between;align-items:center}
+.epk-link:hover{background:rgba(255,215,0,.2);color:var(--white)}
+.epk-copy-bio{font-family:var(--font);font-size:7px;padding:7px 12px;border:var(--pixel2);background:var(--red);color:var(--yellow);border-color:var(--darkred);cursor:pointer;letter-spacing:.3px;box-shadow:2px 2px 0 var(--black);text-transform:uppercase;margin-top:8px;display:inline-block}
+.epk-copy-bio:hover{background:var(--darkred)}
+.epk-copy-bio:active{transform:translate(2px,2px);box-shadow:none}
+.epk-copy-bio.ok{background:var(--green);border-color:var(--darkgreen)}
+.epk-press{display:flex;flex-wrap:wrap;gap:6px}
+.epk-press-tag{font-family:var(--font);font-size:7px;padding:4px 8px;background:var(--blue);color:var(--white);border:var(--pixel);border-color:var(--darkblue)}
+.epk-contact{font-family:var(--font);font-size:7px;color:var(--gray);line-height:2;background:rgba(0,0,0,.2);padding:8px 10px;border:var(--pixel);border-color:var(--darkgray)}
+.epk-contact b{color:var(--white)}
+
+.epk-tab-wrap{background:var(--darkblue);border:var(--pixel2);border-color:var(--yellow);padding:16px}
+.epk-switcher{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.epk-sw-btn{font-family:var(--font);font-size:8px;padding:8px 12px;border:var(--pixel2);cursor:pointer;letter-spacing:.3px;text-transform:uppercase;box-shadow:2px 2px 0 var(--black);transition:transform .1s,box-shadow .1s}
+.epk-sw-btn.active{background:var(--yellow);color:var(--darkred);border-color:var(--darkyellow);box-shadow:none;transform:translate(2px,2px)}
+.epk-sw-btn:not(.active){background:var(--darkgray);color:var(--gray);border-color:var(--black)}
+.epk-pane{display:none}.epk-pane.active{display:block}
+.epk-section{margin-bottom:14px}
+.epk-label{font-family:var(--font);font-size:7px;color:var(--yellow);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid var(--darkyellow)}
+.epk-bio{font-family:var(--font);font-size:7px;color:var(--white);line-height:2;background:rgba(0,0,0,.3);padding:10px 12px;border:var(--pixel);border-color:var(--darkgray)}
+.epk-stats{display:flex;flex-wrap:wrap;gap:6px}
+.epk-stat{font-family:var(--font);font-size:7px;padding:5px 9px;background:var(--green);color:var(--white);border:var(--pixel);border-color:var(--darkgreen)}
+.epk-links{display:flex;flex-direction:column;gap:5px}
+.epk-link{font-family:var(--font);font-size:7px;color:var(--yellow);text-decoration:none;padding:6px 10px;background:rgba(255,215,0,.08);border:var(--pixel);border-color:var(--darkyellow);display:flex;justify-content:space-between;align-items:center}
+.epk-link:hover{background:rgba(255,215,0,.2)}
+.epk-copy-bio{font-family:var(--font);font-size:7px;padding:7px 12px;border:var(--pixel2);background:var(--red);color:var(--yellow);border-color:var(--darkred);cursor:pointer;letter-spacing:.3px;box-shadow:2px 2px 0 var(--black);text-transform:uppercase;margin-top:8px;display:inline-block}
+.epk-copy-bio:hover{background:var(--darkred)}
+.epk-copy-bio:active{transform:translate(2px,2px);box-shadow:none}
+.epk-copy-bio.ok{background:var(--green);border-color:var(--darkgreen)}
+.epk-press{display:flex;flex-wrap:wrap;gap:6px}
+.epk-press-tag{font-family:var(--font);font-size:7px;padding:4px 8px;background:var(--blue);color:var(--white);border:var(--pixel);border-color:var(--darkblue)}
+.epk-contact{font-family:var(--font);font-size:7px;color:var(--gray);line-height:2.2;background:rgba(0,0,0,.2);padding:8px 10px;border:var(--pixel);border-color:var(--darkgray)}
+.epk-contact b{color:var(--white)}
+
+.epk-dl-btn{display:block;font-family:var(--font);font-size:8px;padding:10px 14px;background:var(--yellow);color:var(--darkred);border:var(--pixel2);border-color:var(--darkyellow);text-decoration:none;text-align:center;letter-spacing:.3px;text-transform:uppercase;box-shadow:var(--shadow);margin-top:8px;cursor:pointer}
+.epk-dl-btn:hover{background:var(--white);transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--black)}
+.epk-dl-btn:active{transform:translate(2px,2px);box-shadow:none}
+.epk-attach-note{font-family:var(--font);font-size:7px;color:var(--red);background:rgba(227,53,13,.15);border:1px solid var(--red);padding:7px 10px;line-height:1.8;margin-bottom:6px}
+
+.av-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,58,.88);z-index:1000;overflow-y:auto;padding:2rem 1rem}
+.av-modal{max-width:680px;margin:0 auto;background:var(--darkblue);border:3px solid var(--yellow);box-shadow:6px 6px 0 var(--black)}
+.av-header{background:var(--yellow);padding:12px 18px;display:flex;justify-content:space-between;align-items:center}
+.av-title{font-family:var(--font);font-size:10px;color:var(--darkred);letter-spacing:.5px}
+.av-close{font-family:var(--font);font-size:9px;background:var(--darkred);color:var(--yellow);border:2px solid var(--black);padding:5px 10px;cursor:pointer;box-shadow:2px 2px 0 var(--black)}
+.av-body{padding:20px}
+.av-section{margin-bottom:18px}
+.av-section-label{font-family:var(--font);font-size:8px;color:var(--yellow);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--darkyellow)}
+.av-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.av-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.av-field{margin-bottom:10px}
+.av-label{font-family:var(--font);font-size:7px;color:var(--gray);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+.av-input{width:100%;font-family:var(--font);font-size:8px;padding:8px;border:2px solid var(--darkgray);background:var(--cream);color:var(--black);outline:none}
+.av-input:focus{border-color:var(--yellow)}
+.av-select{width:100%;font-family:var(--font);font-size:8px;padding:8px;border:2px solid var(--darkgray);background:var(--cream);color:var(--black);outline:none}
+.av-textarea{width:100%;font-family:var(--font);font-size:7px;padding:8px;border:2px solid var(--darkgray);background:var(--cream);color:var(--black);outline:none;resize:vertical;line-height:1.8}
+.av-textarea:focus{border-color:var(--yellow)}
+.av-check-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.av-check-row label{font-family:var(--font);font-size:7px;color:var(--gray);cursor:pointer}
+.av-genbtn{font-family:var(--font);font-size:7px;padding:9px 14px;background:var(--blue);color:var(--white);border:2px solid var(--darkblue);cursor:pointer;box-shadow:2px 2px 0 var(--black);text-transform:uppercase;letter-spacing:.3px}
+.av-genbtn:hover{background:var(--darkblue)}
+.av-genbtn:active{transform:translate(2px,2px);box-shadow:none}
+.av-gen-status{font-family:var(--font);font-size:7px;color:var(--gray);margin-left:10px}
+.av-footer{display:flex;gap:10px;justify-content:flex-end;padding-top:14px;border-top:2px solid var(--darkgray)}
+.av-cancelbtn{font-family:var(--font);font-size:8px;padding:10px 16px;background:var(--darkgray);color:var(--white);border:2px solid var(--black);cursor:pointer;box-shadow:2px 2px 0 var(--black);text-transform:uppercase}
+.av-savebtn{font-family:var(--font);font-size:8px;padding:10px 20px;background:var(--green);color:var(--white);border:2px solid var(--darkgreen);cursor:pointer;box-shadow:2px 2px 0 var(--black);text-transform:uppercase;letter-spacing:.3px}
+.av-savebtn:hover{background:var(--darkgreen)}
+.av-savebtn:active{transform:translate(2px,2px);box-shadow:none}
+
+</style>
+</head>
+<body>
+<div class="page">
+<div class="hdr">
+  <div>
+    <h1><span class="pokeball-icon"></span> Stevie — <span>Japan Tour 2025</span></h1>
+    <p>Booking tracker · 30 venues · 6 cities · August 12–23</p>
+  </div>
+  <div class="hbtns">
+    <button class="btn" style="background:var(--green);color:var(--white);border-color:var(--darkgreen)" onclick="openAddVenue()">+ Add Venue</button>
+    <button class="btn" style="background:var(--blue);color:var(--white);border-color:var(--darkblue)" onclick="openSendOrder()">&#9733; Send Order</button>
+    <button class="btn btn-gd" onclick="exportCSV()">Export CSV</button>
+    <button class="btn btn-dk" onclick="clearAll()">Reset all</button>
+  </div>
+</div>
+<div class="tline">
+  <h3>Tour dates — August 2025</h3>
+  <div class="tdates">
+    <div class="td t" title="No filter">Aug 12 · Arrive Osaka ✈</div>
+    <div class="td s tdf" onclick="filterByDate('KobeOsaka',this)" title="Show Kobe &amp; Osaka">Aug 13 · Kobe or Osaka</div>
+    <div class="td f" title="No filter">Aug 14 · Summersonic 🎪</div>
+    <div class="td s tdf" onclick="filterByDate('KobeOsaka',this)" title="Show Kobe &amp; Osaka">Aug 15 · Kobe or Osaka</div>
+    <div class="td s tdf" onclick="filterByDate('Kyoto',this)" title="Show Kyoto">Aug 16 · Kyoto</div>
+    <div class="td s tdf" onclick="filterByDate('Kyoto',this)" title="Show Kyoto">Aug 17 · Kyoto</div>
+    <div class="td s tdf" onclick="filterByDate('Nagoya',this)" title="Show Nagoya">Aug 18 · Nagoya</div>
+    <div class="td s tdf" onclick="filterByDate('Nagoya',this)" title="Show Nagoya">Aug 19 · Nagoya</div>
+    <div class="td s tdf" onclick="filterByDate('Tokyo',this)" title="Show Tokyo">Aug 20 · Tokyo</div>
+    <div class="td s tdf" onclick="filterByDate('Tokyo',this)" title="Show Tokyo">Aug 21 · Tokyo</div>
+    <div class="td s tdf" onclick="filterByDate('TokyoYokohama',this)" title="Show Tokyo &amp; Yokohama">Aug 22 · Tokyo / Yokohama</div>
+    <div class="td s tdf" onclick="filterByDate('TokyoYokohama',this)" title="Show Tokyo &amp; Yokohama">Aug 23 · Tokyo / Yokohama</div>
+  </div>
+</div>
+<div class="stats">
+  <div class="sc"><div class="sl">Total venues</div><div class="sv" id="st">30</div></div>
+  <div class="sc"><div class="sl">Reached out</div><div class="sv" id="sr">0</div></div>
+  <div class="sc"><div class="sl">In talks</div><div class="sv" id="sk">0</div></div>
+  <div class="sc"><div class="sl">Confirmed</div><div class="sv g" id="sc">0</div></div>
+  <div class="sc"><div class="sl">Paid</div><div class="sv g" id="sp">0</div></div>
+  <div class="sc"><div class="sl">Tour progress</div><div class="sv g" id="spct">0%</div><div class="pb"><div class="pf" id="sbar" style="width:0%"></div></div></div>
+</div>
+
+<!-- GLOBAL EPK SECTION -->
+<div id="global-epk-wrap" style="margin-bottom:1.25rem">
+  <div style="background:var(--darkblue);border:3px solid var(--yellow);box-shadow:4px 4px 0 var(--black);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="pokeball-icon"></span>
+      <div>
+        <div style="font-family:var(--font);font-size:9px;color:var(--yellow);letter-spacing:.5px">★ PRESS KITS</div>
+        <div style="font-family:var(--font);font-size:7px;color:var(--gray);margin-top:4px;letter-spacing:.3px">Stevie &amp; Chris Jason EPKs — click to expand</div>
+      </div>
+    </div>
+    <button onclick="toggleGlobalEPK()" id="epk-main-btn" style="font-family:var(--font);font-size:8px;padding:9px 16px;background:var(--yellow);color:var(--darkred);border:2px solid var(--darkyellow);cursor:pointer;box-shadow:3px 3px 0 var(--black);text-transform:uppercase;letter-spacing:.3px;transition:transform .1s,box-shadow .1s">▼ View EPKs</button>
+  </div>
+  <div id="global-epk-content" style="display:none;border:3px solid var(--yellow);border-top:none;box-shadow:4px 4px 0 var(--black)"></div>
+</div>
+<div class="ctrls">
+  <input type="text" id="sch" placeholder="Search venues..." oninput="filt()">
+  <select id="fc" onchange="filt()">
+    <option value="">All cities</option>
+    <option>Kobe</option><option>Osaka</option><option>Kyoto</option>
+    <option>Nagoya</option><option>Tokyo</option><option>Yokohama</option>
+  </select>
+  <select id="fs" onchange="filt()">
+    <option value="">All statuses</option>
+    <option value="not-started">Not started</option><option value="reached-out">Reached out</option>
+    <option value="waiting">Waiting for response</option><option value="discussing">Discussing dates</option>
+    <option value="negotiating">Negotiating deal</option><option value="confirmed">Show confirmed</option>
+    <option value="finalised">Finalised</option><option value="payment-pending">Payment pending</option>
+    <option value="paid">Paid</option><option value="declined">Declined</option><option value="on-hold">On hold</option>
+  </select>
+  <select id="fp" onchange="filt()">
+    <option value="">All priorities</option>
+    <option value="1">High priority</option><option value="2">Medium priority</option><option value="3">Low priority</option>
+  </select>
+</div>
+<div id="vc"></div>
+</div>
+
+<!-- ADD VENUE MODAL -->
+<div class="av-overlay" id="av-overlay">
+  <div class="av-modal">
+    <div class="av-header">
+      <span class="av-title">★ ADD NEW VENUE</span>
+      <button class="av-close" onclick="closeAddVenue()">✕ CLOSE</button>
+    </div>
+    <div class="av-body">
+
+      <div class="av-section">
+        <div class="av-section-label">Venue Info</div>
+        <div class="av-grid">
+          <div class="av-field"><label class="av-label">Venue Name *</label><input id="av-name" class="av-input" type="text" placeholder="e.g. The Blue Note" oninput="avAutoSubjects()"></div>
+          <div class="av-field"><label class="av-label">City *</label>
+            <select id="av-city" class="av-select" onchange="avAutoSubjects()">
+              <option value="">Select city...</option>
+              <option value="Kobe">Kobe — Aug 13 or 15</option>
+              <option value="Osaka">Osaka — Aug 13 or 15</option>
+              <option value="Kyoto">Kyoto — Aug 16 or 17</option>
+              <option value="Nagoya">Nagoya — Aug 18 or 19</option>
+              <option value="Tokyo">Tokyo — Aug 20–23</option>
+              <option value="Yokohama">Yokohama — Aug 20–23</option>
+            </select>
+          </div>
+        </div>
+        <div class="av-grid">
+          <div class="av-field"><label class="av-label">Capacity</label><input id="av-cap" class="av-input" type="text" placeholder="~60 intimate"></div>
+          <div class="av-field"><label class="av-label">Fee Model</label>
+            <select id="av-fee" class="av-select">
+              <option value="Door split">Door split</option>
+              <option value="Guarantee / Door split">Guarantee / Door split</option>
+              <option value="Bar deal / Door">Bar deal / Door</option>
+              <option value="Bar deal / negotiate">Bar deal / negotiate</option>
+              <option value="Ticketed">Ticketed</option>
+              <option value="Negotiate directly">Negotiate directly</option>
+            </select>
+          </div>
+        </div>
+        <div class="av-grid-3">
+          <div class="av-field"><label class="av-label">Rating</label><input id="av-rating" class="av-input" type="text" placeholder="4.5"></div>
+          <div class="av-field"><label class="av-label">Review Count</label><input id="av-rc" class="av-input" type="text" placeholder="87"></div>
+          <div class="av-field" style="display:flex;flex-direction:column;justify-content:flex-end">
+            <div class="av-check-row"><input id="av-eng" type="checkbox"><label for="av-eng">English-speaking staff</label></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="av-section">
+        <div class="av-section-label">Contact Details</div>
+        <div class="av-grid">
+          <div class="av-field"><label class="av-label">Phone</label><input id="av-phone" class="av-input" type="text" placeholder="+81 XX-XXXX-XXXX"></div>
+          <div class="av-field"><label class="av-label">Email</label><input id="av-email" class="av-input" type="email" placeholder="info@venue.jp"></div>
+        </div>
+        <div class="av-grid">
+          <div class="av-field"><label class="av-label">Website</label><input id="av-web" class="av-input" type="text" placeholder="https://venue.jp"></div>
+          <div class="av-field"><label class="av-label">Instagram</label><input id="av-ig" class="av-input" type="text" placeholder="@venuename"></div>
+        </div>
+        <div class="av-field"><label class="av-label">Outreach Tip</label><input id="av-tip" class="av-input" type="text" placeholder="e.g. DM on Instagram — owner speaks English"></div>
+      </div>
+
+      <div class="av-section">
+        <div class="av-section-label" style="display:flex;align-items:center;justify-content:space-between">
+          <span>Email Template</span>
+          <div>
+            <button class="av-genbtn" onclick="avGenEmails()">⚡ Auto-Generate Emails</button>
+            <span class="av-gen-status" id="av-gen-status"></span>
+          </div>
+        </div>
+        <div class="av-field"><label class="av-label">English Subject</label><input id="av-eS" class="av-input" type="text"></div>
+        <div class="av-field"><label class="av-label">English Body</label><textarea id="av-eB" class="av-textarea" rows="7"></textarea></div>
+        <div class="av-field"><label class="av-label">Japanese Subject</label><input id="av-jS" class="av-input" type="text"></div>
+        <div class="av-field"><label class="av-label">Japanese Body</label><textarea id="av-jB" class="av-textarea" rows="7"></textarea></div>
+        <div class="av-field"><label class="av-label">Follow-up Subject (EN)</label><input id="av-fS" class="av-input" type="text"></div>
+        <div class="av-field"><label class="av-label">Follow-up Body (EN)</label><textarea id="av-fB" class="av-textarea" rows="5"></textarea></div>
+      </div>
+
+      <div class="av-footer">
+        <button class="av-cancelbtn" onclick="closeAddVenue()">Cancel</button>
+        <button class="av-savebtn" onclick="submitAddVenue()">★ Add Venue</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const SC={
+  'not-started':{bg:'#f8fafc',cl:'#6b7a8d',bd:'#e2e8f0'},
+  'reached-out':{bg:'#e8f1fb',cl:'#185fa5',bd:'#b5d4f4'},
+  'waiting':{bg:'#fdf6e3',cl:'#9a6200',bd:'#f0d090'},
+  'discussing':{bg:'#fff3e0',cl:'#7a4800',bd:'#f0c070'},
+  'negotiating':{bg:'#f0eefe',cl:'#4a3ab0',bd:'#c8c0f0'},
+  'confirmed':{bg:'#e6f4ed',cl:'#1e6b3a',bd:'#a8d8bc'},
+  'finalised':{bg:'#d4edda',cl:'#155724',bd:'#88c8a0'},
+  'payment-pending':{bg:'#fff3cd',cl:'#856404',bd:'#f0c070'},
+  'paid':{bg:'#c8e6c9',cl:'#1b5e20',bd:'#78c890'},
+  'declined':{bg:'#fdeaea',cl:'#a32d2d',bd:'#f7c1c1'},
+  'on-hold':{bg:'#f0f4f8',cl:'#6b7a8d',bd:'#d0d8e4'}
+};
+const SL={'not-started':'Not started','reached-out':'Reached out','waiting':'Waiting for response','discussing':'Discussing dates','negotiating':'Negotiating deal','confirmed':'Show confirmed','finalised':'Finalised','payment-pending':'Payment pending','paid':'Paid','declined':'Declined','on-hold':'On hold'};
+const CDATES={'Kobe':'Aug 13 or 15','Osaka':'Aug 13 or 15','Kyoto':'Aug 16 or 17','Nagoya':'Aug 18 or 19','Tokyo':'Aug 20–23','Yokohama':'Aug 20–23 (flex)'};
+const CITY_DATES_LOCAL={'Kobe':'August 13 or 15','Osaka':'August 13 or 15','Kyoto':'August 16 or 17','Nagoya':'August 18 or 19','Tokyo':'August 20th through the 23rd','Yokohama':'August 20th through the 23rd'};
+const DP={top:'1',prestige:'1',legendary:'1',new:'2','':'2'};
+const STEVIE_BIO='Stevie is a Chennai-based singer-songwriter and oaf. Records artist whose sound spans Pop, Hip-Hop, Trap, R&B and ambient electronica — ideas rooted in acoustic guitar that expand into something bigger. Winner of the Best Young Indie Artist Award at Radio City Freedom Awards 2018. Over 500,000 streams on Spotify, 250,000+ listeners worldwide. Featured in Rolling Stone India, Vogue and ScoopWhoop. Shared stages with Plini, Junkyard Groove and Girish and the Chronicles.';
+const CHRIS_BIO='Chris Jason is a Chennai-based session guitarist, bassist, composer and artist with over 10 years of experience in the Indian film industry. 70+ film credits, 200+ released songs, and upcoming debut album Derealization (2026). Has collaborated with Arivu, Sid Sriram, Shakthisree Gopalan, Khatija Rahman and many others.';
+const STEVIE_CREDS="With over 500,000 streams on Spotify across 250,000+ listeners worldwide, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, features in Rolling Stone India, Vogue and ScoopWhoop, and stage time with Plini, Junkyard Groove and Girish and the Chronicles — I bring a proven live track record and a growing international audience.";
+const CHRIS_LINE="I'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.";
+const MGMT_LINE='Management: Siddharth Nair, Manager, Oaf Records';
+const STEVIE_EPK_URL='https://stevie-epk-2026.netlify.app/';
+
+const V=[{"id":"kobe-2","city":"Kobe","name":"Live Music Club PADOMA","tag":"","fee":"Door split / confirm directly","eng":false,"rating":"4.4","rc":"43","phone":"+81 78-414-8239","web":"https://padoma.jp","email":"info@padoma.jp","ig":null,"tw":null,"cap":"Small intimate","tip":"Contact via website padoma.jp or phone.","eS":"Booking Inquiry — Stevie (Singer-Songwriter, India) · August 13 or 15","eB":"Dear PADOMA Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Live Music Club PADOMA.\n\nI'll be in Kobe on August 13th or 15th, attending Summersonic on the 14th. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Live Music Club PADOMA ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n今年8月に初の日本ツアーを行う予定で、ぜひPADOMAでの出演機会をいただけないかとご連絡差し上げました。ステージとお客様との近さと、その親密な空間に大変惹かれております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をLive Music Club PADOMAにお届けしたいと思っております。\n\n8月12日に大阪に到着し、14日はSummersonicに参加予定です。8月13日または15日に神戸でのライブが可能でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, PADOMA","fB":"Dear PADOMA Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 13th or 15th in Kobe or Osaka.\n\nWould love to make PADOMA part of the tour if there's availability. Happy to provide any additional information.\n\nThank you for your time.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"Live Music Club PADOMA ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月13日または15日の出演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"kobe-3","city":"Kobe","name":"Underground Gallery Music Bar","tag":"","fee":"Bar deal / Door — negotiate","eng":true,"rating":"4.7","rc":"29","phone":"+81 78-335-1450","web":null,"email":null,"ig":"ugmusicbar","tw":null,"cap":"Intimate bar","tip":"Instagram DM to @ugmusicbar is the best first contact — owner Ish speaks excellent English and is very responsive.","eS":"Hey Ish — Stevie here, Singer-Songwriter from India · August show?","eB":"Hey Ish,\n\nHope you're doing well! My name is Stevie — I'm a singer-songwriter based in Chennai, India, and I'm coming to Japan this August for my first tour.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Underground Gallery Music Bar.\n\nI'll be in Kobe on August 13th or 15th, attending Summersonic on the 14th. Would either of those dates work?\n\nYou can find my EPK here — and I'm happy to send over music or anything else that helps.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to find a way to make this work.\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"ライブ出演のご相談 — Stevie（インド・チェンナイのシンガーソングライター）","jB":"Underground Gallery Music Bar Ish様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\nInstagramでお店を拝見し、レコードコレクションの豊かさとアーティストを心から大切にされる雰囲気に惹かれてご連絡いたしました。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をUnderground Gallery Music Barにお届けしたいと思っております。\n\n8月12日に大阪に到着し、14日はSummersonicに参加予定です。8月13日または15日に神戸でのライブが可能でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nどうぞよろしくお願いいたします。\n\nStevie\nインド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following up — Stevie · August show at Underground Gallery","fB":"Hey Ish,\n\nFollowing up on my earlier message — checking in about a possible show on August 13th or 15th in Kobe.\n\nWould love to play Underground Gallery if there's any way to make it work. Totally understand if things are busy — just didn't want to let the tour dates pass without checking in one more time.\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"再度のご連絡 — Stevie","fjB":"Ish様\n\n先日ご連絡差し上げましたStevieです。8月13日または15日の神戸でのライブについて、ご都合をお伺いしたくご連絡いたしました。お忙しいところ恐れ入りますが、ツアーのスケジュール確定前にもう一度ご確認いただけますと幸いです。\n\nよろしくお願いいたします。\nStevie\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"kobe-4","city":"Kobe","name":"Varit","tag":"","fee":"Door split — confirm directly","eng":false,"rating":"4.2","rc":"474","phone":"+81 78-392-6655","web":null,"email":null,"ig":null,"tw":null,"cap":"Small basement","tip":"Phone call is the most reliable first contact. Check their live calendar before calling.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 2025","eB":"Dear Varit Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, making my first trip to Japan this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Varit.\n\nI'll be in Kobe on August 13th or 15th, attending Summersonic on the 14th. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Varit ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\nジャンルを超えた多様な音楽を受け入れてくださるVaritのブッキング姿勢に深く共感し、ぜひ出演させていただきたいと思いご連絡いたしました。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をVaritにお届けしたいと思っております。\n\n8月12日に大阪に到着し、14日はSummersonicに参加予定です。8月13日または15日に神戸でのライブが可能でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, Varit","fB":"Dear Varit Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 13th or 15th in Kobe.\n\nWould love to make Varit part of the tour if there's availability. Happy to provide any additional information.\n\nThank you for your time.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"Varit ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月13日または15日の出演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"osa-1","city":"Osaka","name":"Livehouse Pangea","tag":"","fee":"Door split","eng":false,"rating":"4.4","rc":"217","phone":"+81 6-4708-0061","web":"http://livepangea.com","email":"info@livepangea.com","ig":null,"tw":null,"cap":"Underground","tip":"Email via website contact form at livepangea.com. Phone: +81 6-4708-0061.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 13 or 15","eB":"Dear Livehouse Pangea Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Livehouse Pangea.\n\nI'll be in Osaka on August 13th or 15th, attending Summersonic on the 14th. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド）","jB":"Livehouse Pangea ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\nPangeaが育んでこられた独立系音楽コミュニティの温かさと熱量に大変惹かれており、そのような夜の一部になれたら嬉しいと思っております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をLivehouse Pangeaにお届けしたいと思っております。\n\n8月12日に大阪に到着し、14日はSummersonicに参加予定です。8月13日または15日に大阪でのライブが可能でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, Livehouse Pangea","fB":"Dear Livehouse Pangea Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 13th or 15th in Osaka.\n\nWould love to be part of the Pangea community for a night if there's availability. Happy to provide any additional information.\n\nThank you for your time.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"Livehouse Pangea ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月13日または15日の大阪公演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"osa-2","city":"Osaka","name":"Live House Anima","tag":"","fee":"Guarantee / Door split","eng":false,"rating":"4.4","rc":"148","phone":"+81 6-4708-8603","web":"https://liveanima.jp","email":"booking@liveanima.jp","ig":null,"tw":null,"cap":"Mid-size underground","tip":"Contact via website liveanima.jp. Phone: +81 6-4708-8603. Opens for events only — coordinate in advance.","eS":"Booking Inquiry — Stevie, Touring Singer-Songwriter · August 13 or 15","eB":"Dear Live House Anima Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, planning my first Japan tour this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Live House Anima.\n\nI'll be in Osaka on August 13th or 15th, attending Summersonic on the 14th. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（インド・チェンナイ発シンガーソングライター）","jB":"Live House Anima ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n海外のツアーアーティストを積極的に受け入れてくださるAnimaのご姿勢に感銘を受け、ぜひ出演をご検討いただきたいと思いご連絡いたしました。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をLive House Animaにお届けしたいと思っております。\n\n8月12日に大阪に到着し、14日はSummersonicに参加予定です。8月13日または15日に大阪でのライブが可能でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, Live House Anima","fB":"Dear Live House Anima Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 13th or 15th in Osaka.\n\nStill very keen on exploring whether either date could work. Happy to provide any additional information at your convenience.\n\nThank you again for your time.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"Live House Anima ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月13日または15日の出演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"osa-3","city":"Osaka","name":"American Music Bar Garth","tag":"","fee":"Bar deal / Door","eng":true,"rating":"4.5","rc":"165","phone":"+81 80-7439-4359","web":"http://garth-bar.com","email":null,"ig":null,"tw":null,"cap":"Intimate bar","tip":"Phone: +81 80-7439-4359. Taka-san speaks excellent English — a phone call works great here.","eS":"Hey Garth — Stevie here, Singer-Songwriter from India · August show?","eB":"Hi Taka-san,\n\nMy name is Stevie — I'm a singer-songwriter from Chennai, India, and I'm heading to Japan this August for my first tour.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to American Music Bar Garth.\n\nI'll be in Osaka on August 13th or 15th, attending Summersonic on the 14th. Would either of those dates work?\n\nYou can find my EPK here — and I'm happy to send over music or anything else that helps.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to find a way to make this work.\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご相談 — Stevie（インドのシンガーソングライター）","jB":"American Music Bar Garth Taka-san様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n音楽への情熱と国際的なご経験をお持ちのTaka-sanのもとで演奏させていただけることを、大変楽しみにしております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をAmerican Music Bar Garthにお届けしたいと思っております。\n\n8月12日に大阪に到着し、14日はSummersonicに参加予定です。8月13日または15日に大阪でのライブが可能でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nどうぞよろしくお願いいたします。\n\nStevie\nインド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following up — Stevie · August show at Garth","fB":"Hi Taka-san,\n\nFollowing up on my earlier message — checking in about a possible show at Garth on August 13th or 15th.\n\nStill very keen if there's any way to make it work. Happy to chat whenever suits you.\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"再度のご連絡 — Stevie","fjB":"Taka-san様\n\n先日ご連絡差し上げましたStevieです。8月13日または15日の件、いかがでしょうか。お忙しいところ恐れ入りますが、ご都合をお聞かせいただけますと嬉しいです。よろしくお願いいたします。\n\nStevie\nインド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"kyo-1","city":"Kyoto","name":"takutaku","tag":"legendary","fee":"Guarantee / Door — established","eng":false,"rating":"4.4","rc":"661","phone":"+81 75-351-1321","web":"https://takutaku.jp","email":"takutaku@song.ocn.ne.jp","ig":null,"tw":null,"cap":"Intimate — legendary","tip":"Email confirmed: takutaku@song.ocn.ne.jp. Phone: +81 75-351-1321. Shows end early due to residential location.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 16 or 17","eB":"Dear takutaku Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, and I'll be touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to takutaku.\n\nI'll be in Kyoto on August 16th or 17th. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"takutaku ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n京都のライブ会場を検討する中で、真っ先に名前を挙げさせていただいたのがtakutakuでございました。数十年にわたりフォーク、ジャズ、インディーの歴史を積み重ねてこられた貴会場で演奏できることは、このツアーの大きな目標のひとつです。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をtakutakuにお届けしたいと思っております。\n\n8月14日に大阪のSummersonicに参加後、8月16日または17日に京都に滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, takutaku","fB":"Dear takutaku Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 16th or 17th in Kyoto.\n\nPlaying takutaku remains the show I am most hoping to make happen in Kyoto. I completely understand if the calendar is full, but wanted to check in one final time.\n\nThank you sincerely for your time and consideration.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"takutaku ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月16日・17日の出演についてご検討いただけておりましたでしょうか。\n\ntakutakuでの演奏は、この京都ツアーで最も楽しみにしている機会のひとつです。ご多忙のところ大変恐れ入りますが、今一度ご確認いただけますと幸いです。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"kyo-2","city":"Kyoto","name":"Live Spot Rag","tag":"","fee":"Ticketed — cover + drink tickets","eng":true,"rating":"4.2","rc":"258","phone":"+81 75-241-0446","web":"https://www.ragnet.co.jp/livespot","email":"info@ragnet.co.jp","ig":null,"tw":null,"cap":"Mid-size ticketed","tip":"Email confirmed: info@ragnet.co.jp. Staff speaks English — feel free to write in English.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 16 or 17","eB":"Dear Live Spot Rag Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Live Spot Rag.\n\nI'll be in Kyoto on August 16th or 17th. Would either of those dates work?\n\nYou can find my EPK here — and I'm happy to send over music or anything else that helps.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to find a way to make this work.\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド）","jB":"Live Spot Rag ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\nチケット制によるプロフェッショナルな運営と、海外アーティストを温かく迎えてくださるという評判に大変魅力を感じております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をLive Spot Ragにお届けしたいと思っております。\n\n8月14日に大阪のSummersonicに参加後、8月16日または17日に京都に滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nどうぞよろしくお願いいたします。\n\nStevie\nインド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, Live Spot Rag","fB":"Dear Live Spot Rag Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 16th or 17th in Kyoto.\n\nWould love to explore a show on either of those evenings if there's any availability.\n\nThank you again for your time.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"Live Spot Rag ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月16日・17日の出演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"kyo-3","city":"Kyoto","name":"Jazz Live Candy","tag":"","fee":"Door deal — negotiate with owner","eng":false,"rating":"4.5","rc":"69","phone":"+81 75-531-2148","web":"http://candy-jazz.com","email":"info@candy-jazz.com","ig":null,"tw":null,"cap":"Intimate basement","tip":"Phone is the primary contact: +81 75-531-2148. Owner manages bookings personally — call first.","eS":"Booking Inquiry — Stevie, Singer-Songwriter · August 16 or 17, Kyoto","eB":"Dear Jazz Live Candy,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, coming to Japan this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Jazz Live Candy.\n\nI'll be in Kyoto on August 16th or 17th. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"ライブ出演のご相談 — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Jazz Live Candy ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n東山の地下に佇む親密な空間で、ほぼ毎夜ライブを開催されているJazz Live Candyに以前から憧れを抱いておりました。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をJazz Live Candyにお届けしたいと思っております。\n\n8月14日に大阪のSummersonicに参加後、8月16日または17日に京都に滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Show at Jazz Live Candy","fB":"Dear Jazz Live Candy,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 16th or 17th in Kyoto.\n\nStill very keen on playing your basement venue in Higashiyama if there's any possibility. Happy to discuss any arrangement.\n\nThank you for your time.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご相談 — 再度のご連絡（Stevie）","fjB":"Jazz Live Candy オーナー様\n\n先日ご連絡差し上げましたStevieです。8月16日・17日の出演についてご検討いただけておりましたでしょうか。お忙しいところ恐れ入りますが、引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"nag-3","city":"Nagoya","name":"Live & Lounge Vio","tag":"","fee":"Negotiate directly","eng":false,"rating":"4.4","rc":"36","phone":"+81 52-737-7739","web":"https://liveloungevio.com","email":"info@liveloungevio.com","ig":null,"tw":null,"cap":"Intimate basement","tip":"Contact via website liveloungevio.com or phone. Good fit for acoustic/indie acts.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 18 or 19","eB":"Dear Live & Lounge Vio Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, making my first trip to Japan this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Live & Lounge Vio.\n\nI'll be in Nagoya on August 18th or 19th. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご相談 — Stevie（シンガーソングライター、インド）","jB":"Live & Lounge Vio ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n「ジャンルを超えたシャープなイベント」というVioの理念に深く共感しております。私の音楽スタイルにとって理想的な舞台だと感じます。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をLive & Lounge Vioにお届けしたいと思っております。\n\n8月18日または19日に名古屋に滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, Live & Lounge Vio","fB":"Dear Live & Lounge Vio Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 18th or 19th in Nagoya.\n\nVio's cross-genre ethos feels like exactly the right fit for the music — I'd love to make it part of the tour if there's any availability.\n\nThank you for your time.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"Live & Lounge Vio ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月18日・19日の出演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"nag-4","city":"Nagoya","name":"Hungry Moose","tag":"new","fee":"Negotiate directly","eng":true,"rating":"4.4","rc":"287","phone":"+81 52-228-6155","web":null,"email":null,"ig":"hungrymoose_nagoya","tw":null,"cap":"Live music bar","tip":"Instagram DM: @hungrymoose_nagoya (confirmed). Phone: +81 52-228-6155. Staff speaks English.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 18 or 19","eB":"Dear Hungry Moose Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, and I'll be touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Hungry Moose.\n\nI'll be in Nagoya on August 18th or 19th. Would either of those dates work?\n\nYou can find my EPK here — and I'm happy to send over music or anything else that helps.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to find a way to make this work.\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご相談 — Stevie（インド・チェンナイのシンガーソングライター）","jB":"Hungry Moose ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n海外からのアーティストにも温かく接してくださるHungry Mooseの雰囲気に惹かれ、名古屋公演の候補としてご連絡申し上げました。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をHungry Mooseにお届けしたいと思っております。\n\n8月18日または19日に名古屋に滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nどうぞよろしくお願いいたします。\n\nStevie\nインド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following up — Stevie · August show at Hungry Moose","fB":"Dear Hungry Moose Team,\n\nFollowing up on my earlier message — checking in about a possible show on August 18th or 19th in Nagoya.\n\nStill very keen if there's any way to make it work. Happy to chat whenever suits you.\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"再度のご連絡 — Stevie","fjB":"Hungry Moose ご担当者様\n\n先日ご連絡差し上げましたStevieです。8月18日・19日の件、いかがでしょうか。お忙しいところ恐れ入りますが、ご都合をお聞かせいただけますと嬉しいです。よろしくお願いいたします。\n\nStevie\nインド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"tok-1","city":"Tokyo","name":"Shelter Shimokitazawa","tag":"top","fee":"Guarantee + Door split (Loft)","eng":false,"rating":"4.4","rc":"997","phone":"+81 3-3466-7430","web":"https://www.loft-prj.co.jp/SHELTER","email":"shelter@loft-prj.co.jp","ig":null,"tw":null,"cap":"60–80 standing","tip":"Email confirmed: shelter@loft-prj.co.jp. Submit via Loft Project booking page. Books 2–3 months out. Include Japan streaming stats.","eS":"Booking Inquiry — Stevie, Touring Singer-Songwriter from India · August 2025","eB":"Dear Shelter Booking Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, planning my first Japan tour this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Shelter Shimokitazawa.\n\nI'll be in Tokyo on August 20th through the 23rd, after shows in Osaka, Kyoto and Nagoya. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Shelter Shimokitazawa ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\nShelterは、このツアーで東京の舞台として真っ先に名前を挙げた会場です。Loft Projectが積み上げてこられた音楽への姿勢と、あの親密な空間への敬意を持ってご連絡申し上げます。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をShelter Shimokitazawaにお届けしたいと思っております。\n\n大阪・京都・名古屋でのライブを経て、8月20日〜23日の間に東京・横浜エリアに滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, Shelter Shimokitazawa","fB":"Dear Shelter Booking Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 20th–23rd in Tokyo.\n\nPlaying Shelter remains the Tokyo show I am most hoping to make happen on this tour. I wanted to follow up respectfully one more time. A full EPK and press materials are ready at your request.\n\nThank you very much for your time and consideration.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"Shelter ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月20日〜23日の東京公演についてご検討いただけておりましたでしょうか。\n\nShelterでの演奏は、このツアーで最も実現したい東京公演のひとつです。ご多忙のところ大変恐れ入りますが、今一度ご確認いただけますと幸いです。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"tok-2","city":"Tokyo","name":"LIVE HAUS Shimokitazawa","tag":"","fee":"Fair door deal — NO noruma","eng":false,"rating":"4.4","rc":"105","phone":null,"web":"https://livehaus.jp","email":"info@livehaus.jp","ig":null,"tw":null,"cap":"~50 intimate","tip":"Contact via website livehaus.jp. No public phone. Explicitly mention you want a door deal, not noruma.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August Tokyo","eB":"Dear LIVE HAUS Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to LIVE HAUS Shimokitazawa.\n\nI'll be in Tokyo on August 20th through the 23rd, after shows in Osaka, Kyoto and Nagoya. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド）","jB":"LIVE HAUS Shimokitazawa ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\nノルマ制を排し、アーティストと公正に向き合うLIVE HAUSの姿勢に、インディペンデントアーティストとして深く共感しております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をLIVE HAUS Shimokitazawaにお届けしたいと思っております。\n\n大阪・京都・名古屋でのライブを経て、8月20日〜23日の間に東京・横浜エリアに滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, LIVE HAUS","fB":"Dear LIVE HAUS Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 20th–23rd in Tokyo.\n\nStill very interested in exploring a fair door or guarantee arrangement. Would love to make LIVE HAUS part of the tour.\n\nThank you for your time.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"LIVE HAUS ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月20日〜23日の東京公演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"tok-3","city":"Tokyo","name":"TOKIO TOKYO","tag":"","fee":"Door arrangement — negotiate","eng":true,"rating":"4.5","rc":"144","phone":null,"web":"https://tokio.world","email":"booking@tokio.world","ig":null,"tw":null,"cap":"Small intimate","tip":"Contact via website tokio.world. Staff speaks English. Send EPK and be specific about your indie/acoustic style.","eS":"Reaching Out — Stevie, Singer-Songwriter from India · August Tokyo","eB":"Hi TOKIO TOKYO Team,\n\nMy name is Stevie — I'm a singer-songwriter from Chennai, India, and I'm coming to Japan this August for my first tour.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to TOKIO TOKYO.\n\nI'll be in Tokyo on August 20th through the 23rd, after shows in Osaka, Kyoto and Nagoya. Would either of those dates work?\n\nYou can find my EPK here — and I'm happy to send over music or anything else that helps.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to find a way to make this work.\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご相談 — Stevie（インド・チェンナイのシンガーソングライター）","jB":"TOKIO TOKYO チームの皆様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n真剣にインディー音楽と向き合うアーティストのみを取り上げるTOKIO TOKYOの姿勢に強く惹かれ、ご連絡いたしました。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をTOKIO TOKYOにお届けしたいと思っております。\n\n大阪・京都・名古屋でのライブを経て、8月20日〜23日の間に東京・横浜エリアに滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nどうぞよろしくお願いいたします。\n\nStevie\nインド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, TOKIO TOKYO","fB":"Hi TOKIO TOKYO Team,\n\nFollowing up on a message from a couple of weeks ago about a show in August (20th–23rd).\n\nWould love to make TOKIO TOKYO part of the Tokyo leg if there's any possibility. Happy to send music and EPK at any time.\n\nThanks for your time!\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご相談 — 再度のご連絡（Stevie）","fjB":"TOKIO TOKYO チームの皆様\n\n先日ご連絡差し上げましたStevieです。8月20日〜23日の東京公演についてご検討いただけておりましたでしょうか。引き続きよろしくお願いいたします。\n\nStevie\nインド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"tok-4","city":"Tokyo","name":"Rokudemonai Yoru","tag":"","fee":"Door split — confirm","eng":false,"rating":"","rc":"","phone":"+81 3-6804-9567","web":null,"email":null,"ig":null,"tw":null,"cap":"Tiny — Shimokitazawa","tip":"Phone call is the most reliable first contact: +81 3-6804-9567. Good for a late-night Tokyo set.","eS":"Booking Inquiry — Stevie, Singer-Songwriter · August Tokyo","eB":"Dear Rokudemonai Yoru Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, making my first trip to Japan this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Rokudemonai Yoru.\n\nI'll be in Tokyo on August 20th through the 23rd, after shows in Osaka, Kyoto and Nagoya. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご相談 — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Rokudemonai Yoru ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n下北沢で長い歴史を持つ六でもない夜の、深夜の親密な雰囲気に以前から惹かれておりました。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をRokudemonai Yoruにお届けしたいと思っております。\n\n大阪・京都・名古屋でのライブを経て、8月20日〜23日の間に東京・横浜エリアに滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · Late-Night Set, Shimokitazawa","fB":"Dear Rokudemonai Yoru Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about a late-night set in August (20th–23rd).\n\nWould love to make Rokudemonai Yoru part of the Tokyo stop if there's any availability.\n\nThank you for your time.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご相談 — 再度のご連絡（Stevie）","fjB":"六でもない夜 ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月20日〜23日の深夜セットについてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"yok-3","city":"Yokohama","name":"Yokohama Kentos","tag":"","fee":"Ticketed / bar shows","eng":false,"rating":"","rc":"","phone":"+81 45-324-5933","web":null,"email":null,"ig":null,"tw":null,"cap":"Live band venue","tip":"Phone call is the best first contact: +81 45-324-5933. Classic Yokohama venue — good backup option.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 2025","eB":"Dear Yokohama Kentos Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, making my first trip to Japan this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Yokohama Kentos.\n\nI'll be in Yokohama on August 20th through the 23rd, after shows in Osaka, Kyoto and Nagoya. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご相談 — Stevie（シンガーソングライター、インド）","jB":"Yokohama Kentos ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n横浜のライブミュージックシーンで長年にわたり存在感を保ち続けてきたKentosの歴史に、深い敬意を抱いております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をYokohama Kentosにお届けしたいと思っております。\n\n大阪・京都・名古屋でのライブを経て、8月20日〜23日の間に東京・横浜エリアに滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, Yokohama Kentos","fB":"Dear Yokohama Kentos Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 20th–23rd.\n\nWould love to make Kentos part of the tour if there's any availability. Happy to provide any additional information.\n\nThank you for your time.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"Yokohama Kentos ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月20日〜23日の横浜公演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"kobe-5","city":"Kobe","name":"Music Bar Ellie's","tag":"","fee":"Bar deal / door cover","eng":true,"rating":"4.7","rc":"83","phone":"+81 78-252-2728","web":"","email":null,"ig":"ellies_kobe","tw":null,"cap":"~30 intimate","hours":"Tue–Sun 7:00–11:00 PM","tip":"Ellie's is a jazz/acoustic bar with live performances every night. Cover charge ¥2,750pp. Owner Ellie speaks English. Phone or Instagram DM.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 13 or 15","eB":"Dear Ellie's Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Music Bar Ellie's.\n\nI'll be in Kobe on August 13th or 15th, attending Summersonic on the 14th. Would either of those dates work?\n\nYou can find my EPK here — and I'm happy to send over music or anything else that helps.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to find a way to make this work.\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご相談 — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Music Bar Ellie's ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n一人の演奏者が声とギターだけで観客を引き込める親密な空間と、音楽を心から愛するホストのおもてなしに大変魅力を感じております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をMusic Bar Ellie'sにお届けしたいと思っております。\n\n8月12日に大阪に到着し、14日はSummersonicに参加予定です。8月13日または15日に神戸でのライブが可能でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nどうぞよろしくお願いいたします。\n\nStevie\nインド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, Ellie's Kobe","fB":"Dear Ellie's Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 13th or 15th in Kobe.\n\nWould love to make Ellie's part of the tour if there's any availability. Happy to provide any additional information.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご相談 — 再度のご連絡（Stevie）","fjB":"Ellie's ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月13日または15日の出演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"kobe-6","city":"Kobe","name":"Live Bar Brothers and Sisters","tag":"","fee":"Bar deal / door","eng":false,"rating":"4.7","rc":"68","phone":"+81 78-332-0208","web":"","email":null,"ig":"brothersandsisters_kobe","tw":null,"cap":"~50 intimate","hours":"Check schedule","tip":"Owner Marvy is a beloved Kobe vocalist with a warm, welcoming atmosphere. Acoustic sets welcomed. Phone is best first contact.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 13 or 15","eB":"Dear Brothers and Sisters Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Live Bar Brothers and Sisters.\n\nI'll be in Kobe on August 13th or 15th, attending Summersonic on the 14th. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Live Bar Brothers and Sisters ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\nオーナーの音楽への愛情と、アコースティックライブが深く心に響くという評判に惹かれ、ぜひBrothers and Sistersで演奏させていただきたいと思いご連絡いたしました。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をLive Bar Brothers and Sistersにお届けしたいと思っております。\n\n8月12日に大阪に到着し、14日はSummersonicに参加予定です。8月13日または15日に神戸でのライブが可能でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, Brothers and Sisters","fB":"Dear Brothers and Sisters Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 13th or 15th in Kobe.\n\nWould love to make Brothers and Sisters part of the tour if there's any availability.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"Brothers and Sisters ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月13日または15日の出演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"osa-5","city":"Osaka","name":"Music Bar SINKAGURA","tag":"","fee":"Bar deal / door","eng":false,"rating":"4.4","rc":"65","phone":"+81 6-6282-7261","web":"","email":null,"ig":"sinkagura_osaka","tw":null,"cap":"~50 intimate","hours":"Check Instagram for live nights","tip":"Intimate live music bar in Shinsaibashi. Hosts regular live nights. Phone or Instagram DM.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 13 or 15","eB":"Dear SINKAGURA Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Music Bar SINKAGURA.\n\nI'll be in Osaka on August 13th or 15th, attending Summersonic on the 14th. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご相談 — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Music Bar SINKAGURA ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n温かく親密な雰囲気の中でライブ音楽が大切にされているSINKAGURAの空間に、大変魅力を感じております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をMusic Bar SINKAGURAにお届けしたいと思っております。\n\n8月12日に大阪に到着し、14日はSummersonicに参加予定です。8月13日または15日に大阪でのライブが可能でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, SINKAGURA","fB":"Dear SINKAGURA Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 13th or 15th in Osaka.\n\nWould love to make SINKAGURA part of the tour if there's any availability.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご相談 — 再度のご連絡（Stevie）","fjB":"SINKAGURA ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月13日または15日の出演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"osa-6","city":"Osaka","name":"Namba Bears","tag":"","fee":"Door split / BYOB","eng":false,"rating":"4.5","rc":"163","phone":"+81 6-6649-5564","web":"","email":null,"ig":"namba_bears","tw":null,"cap":"~80 basement","hours":"Check schedule — shows typically start 6PM","tip":"Raw underground basement venue. Very indie community. BYOB culture, low ticket prices. Phone or Instagram for booking.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 13 or 15","eB":"Dear Namba Bears Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Namba Bears.\n\nI'll be in Osaka on August 13th or 15th, attending Summersonic on the 14th. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Namba Bears ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\nNamba Bearsは大阪でも特にアンダーグラウンドな音楽シーンの中心として知られており、そのコミュニティの一部になれたらと思い、ご連絡いたしました。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をNamba Bearsにお届けしたいと思っております。\n\n8月12日に大阪に到着し、14日はSummersonicに参加予定です。8月13日または15日に大阪でのライブが可能でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, Namba Bears","fB":"Dear Namba Bears Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 13th or 15th in Osaka.\n\nStill very keen on playing Namba Bears if there's any availability.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"Namba Bears ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月13日または15日の出演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"kyo-5","city":"Kyoto","name":"Live House DEWEY","tag":"","fee":"Door split / negotiate","eng":false,"rating":"4.2","rc":"37","phone":"+81 75-755-8747","web":"","email":null,"ig":"livehousedewey","tw":null,"cap":"~80 capacity","hours":"Check schedule","tip":"Small basement venue in Kiyamachi. Owner hosts live events personally. Very warm community feel. Phone or Instagram DM.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 16 or 17","eB":"Dear DEWEY Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Live House DEWEY.\n\nI'll be in Kyoto on August 16th or 17th. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Live House DEWEY ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n木屋町の地下のDEWEYで、オーナー様が直接手がけるイベントの温かさと丁寧さに大変惹かれております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をLive House DEWEYにお届けしたいと思っております。\n\n8月14日に大阪のSummersonicに参加後、8月16日または17日に京都に滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, DEWEY Kyoto","fB":"Dear DEWEY Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 16th or 17th in Kyoto.\n\nWould love to make DEWEY part of the tour if there's any availability.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"Live House DEWEY ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月16日・17日の出演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"kyo-6","city":"Kyoto","name":"someno kyoto","tag":"","fee":"Door split / negotiate","eng":false,"rating":"4.6","rc":"157","phone":"+81 75-256-3399","web":"","email":null,"ig":"someno_kyoto","tw":null,"cap":"~60 intimate","hours":"Check schedule","tip":"Acoustic/singer-songwriter focused venue. 4.6 stars. Specifically built for singers and songwriters. Contact via Instagram or phone.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 16 or 17","eB":"Dear someno kyoto Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to someno kyoto.\n\nI'll be in Kyoto on August 16th or 17th. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"someno kyoto ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\nシンガーソングライターのための親密な空間として知られるsomeno kyotoは、このツアーで最も楽しみにしている京都の会場のひとつです。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をsomeno kyotoにお届けしたいと思っております。\n\n8月14日に大阪のSummersonicに参加後、8月16日または17日に京都に滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, someno kyoto","fB":"Dear someno kyoto Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 16th or 17th in Kyoto.\n\nsomeno kyoto feels like exactly the right fit for this tour — would love to make it happen if there's any availability.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"someno kyoto ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月16日・17日の出演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"nag-5","city":"Nagoya","name":"Jazz Matilda","tag":"","fee":"Bar deal / negotiate","eng":true,"rating":"5.0","rc":"118","phone":"+81 52-263-6272","web":"","email":null,"ig":"jazzmatilda_nagoya","tw":null,"cap":"~30 intimate jazz bar","hours":"Mon–Sat 7:00–11:30 PM (Sun closed)","tip":"5-star rated. Owner Taka speaks English, plays guitar nightly, 30 years running. Very welcoming to musicians. 5th floor. Phone or Instagram.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 18 or 19","eB":"Dear Jazz Matilda / Taka-san,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Jazz Matilda.\n\nI'll be in Nagoya on August 18th or 19th. Would either of those dates work?\n\nYou can find my EPK here — and I'm happy to send over music or anything else that helps.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to find a way to make this work.\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご相談 — Stevie（インド・チェンナイのシンガーソングライター）","jB":"Jazz Matilda Taka-san様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n30年にわたりお店を営まれ、ご自身もギターを弾かれるTaka-sanのJazz Matildaで演奏できることは、このツアーにとって特別な意味を持つと感じております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をJazz Matildaにお届けしたいと思っております。\n\n8月18日または19日に名古屋に滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nどうぞよろしくお願いいたします。\n\nStevie\nインド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following up — Stevie · August show at Jazz Matilda","fB":"Dear Taka-san,\n\nFollowing up on my earlier message — checking in about a possible show at Jazz Matilda on August 18th or 19th.\n\nStill very keen if there's any way to make it work.\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"再度のご連絡 — Stevie","fjB":"Taka-san様\n\n先日ご連絡差し上げましたStevieです。8月18日・19日の件、いかがでしょうか。お忙しいところ恐れ入りますが、ご都合をお聞かせいただけますと嬉しいです。\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"nag-6","city":"Nagoya","name":"Memory Lane","tag":"","fee":"Bar deal / door","eng":false,"rating":"4.4","rc":"70","phone":"+81 52-971-3577","web":"","email":null,"ig":"memorylane_nagoya","tw":null,"cap":"~40 small bar","hours":"Mon–Fri 6PM–1AM, Sat 6PM–midnight (Sun closed)","tip":"Long-established live music bar, 7th floor near TV Tower. Regular live shows and open mics. Phone is best first contact.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 18 or 19","eB":"Dear Memory Lane Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Memory Lane.\n\nI'll be in Nagoya on August 18th or 19th. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご相談 — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Memory Lane ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n名古屋のライブミュージックシーンで長年にわたりライブやオープンマイクを開催し続けてこられたMemory Laneの歴史に深い敬意を抱いております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をMemory Laneにお届けしたいと思っております。\n\n8月18日または19日に名古屋に滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, Memory Lane","fB":"Dear Memory Lane Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 18th or 19th in Nagoya.\n\nWould love to make Memory Lane part of the tour if there's any availability.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご相談 — 再度のご連絡（Stevie）","fjB":"Memory Lane ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月18日・19日の出演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"nag-7","city":"Nagoya","name":"Get Ready","tag":"","fee":"Bar deal / negotiate","eng":false,"rating":"5.0","rc":"8","phone":"+81 52-251-5543","web":"","email":null,"ig":"getready_nagoya","tw":null,"cap":"~20 tiny bar","hours":"Mon–Fri 9PM–2AM (Sat–Sun closed)","tip":"Tiny hidden bar run by singer Emi who performs nightly. Acoustic guitar always available. Extremely welcoming to musicians. Phone is best contact.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 18 or 19","eB":"Dear Get Ready / Emi-san,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Get Ready.\n\nI'll be in Nagoya on August 18th or 19th. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご相談 — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Get Ready ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\nアコースティックギターがいつでも手の届く場所にあり、音楽と会話が自然に溶け合うGet Readyの雰囲気に大変惹かれております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をGet Readyにお届けしたいと思っております。\n\n8月18日または19日に名古屋に滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August show at Get Ready","fB":"Dear Emi-san,\n\nFollowing up on my earlier message — checking in about a possible show on August 18th or 19th.\n\nWould love to find a way to make it work. Happy to chat whenever suits you.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご相談 — 再度のご連絡（Stevie）","fjB":"Get Ready Emi-san様\n\n先日ご連絡差し上げましたStevieです。8月18日・19日の件、いかがでしょうか。引き続きよろしくお願いいたします。\n\nStevie\nインド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"tok-5","city":"Tokyo","name":"Basement Bar","tag":"","fee":"Door split / cheap entry","eng":false,"rating":"4.4","rc":"314","phone":"+81 3-5481-6366","web":"","email":null,"ig":"basementbar_shimokitazawa","tw":null,"cap":"~50 very small","hours":"Daily 6PM–midnight","tip":"Shimokitazawa institution. Stage takes up a third of the floor. Booker Kokke known for quality curation. Phone or Instagram.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 2025 Tokyo","eB":"Dear Basement Bar Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Basement Bar.\n\nI'll be in Tokyo on August 20th through the 23rd, after shows in Osaka, Kyoto and Nagoya. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Basement Bar ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n下北沢のBasement Barは、丁寧な選曲によって毎回のライブに意味を持たせているという評判が印象的でした。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をBasement Barにお届けしたいと思っております。\n\n大阪・京都・名古屋でのライブを経て、8月20日〜23日の間に東京・横浜エリアに滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, Basement Bar","fB":"Dear Basement Bar Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 20th–23rd in Tokyo.\n\nWould love to make Basement Bar part of the Tokyo leg if there's any availability.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"Basement Bar ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月20日〜23日の東京公演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"tok-6","city":"Tokyo","name":"Music Bar LIVEHOLIC","tag":"","fee":"Bar deal / negotiate","eng":true,"rating":"4.8","rc":"445","phone":"+81 3-5738-7669","web":"","email":null,"ig":"liveholic_shimokitazawa","tw":null,"cap":"~60 intimate","hours":"Daily 7PM–4AM","tip":"4.8★ with 445 reviews — exceptionally well-loved. Staff speaks English, very friendly to international visitors. Request-based music. Instagram DM or phone.","eS":"Reaching Out — Stevie, Singer-Songwriter from India · August Tokyo","eB":"Hi LIVEHOLIC Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, coming to Japan this August for my first tour.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Music Bar LIVEHOLIC.\n\nI'll be in Tokyo on August 20th through the 23rd, after shows in Osaka, Kyoto and Nagoya. Would either of those dates work?\n\nYou can find my EPK here — and I'm happy to send over music or anything else that helps.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to find a way to make this work.\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご相談 — Stevie（インド・チェンナイのシンガーソングライター）","jB":"Music Bar LIVEHOLIC ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n500件近くのレビューで4.8点というLIVEHOLICのスタッフの温かさと音楽への情熱に、大変惹かれております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をMusic Bar LIVEHOLICにお届けしたいと思っております。\n\n大阪・京都・名古屋でのライブを経て、8月20日〜23日の間に東京・横浜エリアに滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nどうぞよろしくお願いいたします。\n\nStevie\nインド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following up — Stevie · August show at LIVEHOLIC","fB":"Hi LIVEHOLIC Team,\n\nFollowing up on my earlier message — checking in about a possible show in August (20th–23rd in Tokyo).\n\nStill very keen if there's any way to make it work. Happy to chat!\n\nStevie\nChennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご相談 — 再度のご連絡（Stevie）","fjB":"LIVEHOLIC ご担当者様\n\n先日ご連絡差し上げましたStevieです。8月20日〜23日の東京公演についてご検討いただけておりましたでしょうか。引き続きよろしくお願いいたします。\n\nStevie\nインド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"yok-4","city":"Yokohama","name":"Thumbs Up","tag":"","fee":"Bar deal / door split","eng":false,"rating":"4.3","rc":"89","phone":"+81 45-261-0666","web":"http://thumbsup.co.jp","email":null,"ig":"thumbsup_yokohama","tw":null,"cap":"~80 intimate","hours":"Check website","tip":"Long-running Yokohama live music bar. Cross-genre, welcoming to emerging artists. Contact via website or phone.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 2025","eB":"Dear Thumbs Up Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Thumbs Up.\n\nI'll be in Yokohama on August 20th through the 23rd, after shows in Osaka, Kyoto and Nagoya. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Thumbs Up ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\n横浜のライブシーンで長年にわたり様々なジャンルのアーティストを温かく迎えてこられたThumbs Upに、ご連絡申し上げます。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をThumbs Upにお届けしたいと思っております。\n\n大阪・京都・名古屋でのライブを経て、8月20日〜23日の間に東京・横浜エリアに滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, Thumbs Up","fB":"Dear Thumbs Up Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 20th–23rd in Yokohama.\n\nWould love to make Thumbs Up part of the tour if there's any availability.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"Thumbs Up ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月20日〜23日の横浜公演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"yok-5","city":"Yokohama","name":"El Puente","tag":"","fee":"Bar deal / negotiate","eng":false,"rating":"4.5","rc":"62","phone":"+81 45-681-3981","web":"","email":null,"ig":"elpuente_yokohama","tw":null,"cap":"~40 intimate","hours":"Check schedule","tip":"Long-running intimate acoustic/folk music bar near Kannai. Known for welcoming solo artists and singer-songwriters. Phone first contact.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 2025","eB":"Dear El Puente Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to El Puente.\n\nI'll be in Yokohama on August 20th through the 23rd, after shows in Osaka, Kyoto and Nagoya. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"El Puente ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\nソロアコースティックアーティストやシンガーソングライターに温かく接してくださるEl Puenteの評判に大変惹かれております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をEl Puenteにお届けしたいと思っております。\n\n大阪・京都・名古屋でのライブを経て、8月20日〜23日の間に東京・横浜エリアに滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, El Puente","fB":"Dear El Puente Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 20th–23rd in Yokohama.\n\nWould love to make El Puente part of the tour if there's any availability.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"El Puente ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月20日〜23日の横浜公演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"},{"id":"yok-6","city":"Yokohama","name":"Bar Fly","tag":"","fee":"Bar deal / door split","eng":false,"rating":"4.4","rc":"51","phone":"+81 45-681-3000","web":"","email":null,"ig":"barfly_yokohama","tw":null,"cap":"~50 intimate","hours":"Check schedule","tip":"Small live music bar near Kannai/Isezakicho. Hosts touring indie acts and local bands. Phone or Instagram DM for booking.","eS":"Booking Inquiry — Stevie, Singer-Songwriter from India · August 2025","eB":"Dear Bar Fly Team,\n\nMy name is Stevie — a singer-songwriter from Chennai, India, touring Japan for the first time this August.\n\nWith over 500,000 streams on Spotify, 250,000+ listeners, the Best Young Indie Artist Award at Radio City Freedom Awards 2018, and features in Rolling Stone India, Vogue and ScoopWhoop — I'd love to bring that energy to Bar Fly.\n\nI'll be in Yokohama on August 20th through the 23rd, after shows in Osaka, Kyoto and Nagoya. I'd love to explore whether either date might be available.\n\nYou can find my EPK here — full EPK, streaming data and press links are all there.\n\nI'm also travelling with Chris Jason, a Chennai-based guitarist and composer with 70+ film credits, who would love to play a short opening instrumental set if the evening allows for it.\n\nI've looped in my manager and would love to discuss possibilities at your convenience.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","jS":"出演のご依頼について — Stevie（シンガーソングライター、インド・チェンナイ）","jB":"Bar Fly ご担当者様\n\nはじめてご連絡申し上げます。インド・チェンナイのシンガーソングライター、Stevieと申します。\n\nツアーインディアーティストと地元バンドを共にホストし、横浜のライブ音楽コミュニティを育ててこられたBar Flyのご姿勢に共感しております。\n\nSpotifyで50万回以上のストリーム、25万人以上のリスナーを持ち、2018年のRadio City Freedom Awardsでベスト・ヤング・インディ・アーティスト賞を受賞しました。Rolling Stone India、Vogue、ScoopWhoopにも掲載されております。ぜひその熱量をBar Flyにお届けしたいと思っております。\n\n大阪・京都・名古屋でのライブを経て、8月20日〜23日の間に東京・横浜エリアに滞在予定でございます。\n\nEPKはこちらからご覧いただけます。ストリーミングデータやプレス資料もすべてまとめてございます。\n\nまた、70本以上の映画音楽クレジットを持つチェンナイ出身のギタリスト・コンポーザー、Chris Jasonも同行予定で、ご都合が合えば彼もオープニングのインストゥルメンタルセットを演奏できればと思っております。\n\nマネージャーにも共有しており、ご都合の良いときにぜひお話しさせていただければと思います。\n\nご検討いただけますようお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records","fS":"Following Up — Stevie · August Booking, Bar Fly","fB":"Dear Bar Fly Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about August 20th–23rd in Yokohama.\n\nWould love to make Bar Fly part of the tour if there's any availability.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\nManagement: Siddharth Nair, Manager, Oaf Records","fjS":"出演のご依頼について — 再度のご連絡（Stevie）","fjB":"Bar Fly ご担当者様\n\n先日ご連絡差し上げましたStevieと申します。8月20日〜23日の横浜公演についてご検討いただけておりましたでしょうか。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\nシンガーソングライター｜インド・チェンナイ\nManagement: Siddharth Nair, Manager, Oaf Records"}];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let customVenues=[];
+try{customVenues=JSON.parse(localStorage.getItem('stevie_custom_v8')||'[]');}catch{}
+function saveCustom(){try{localStorage.setItem('stevie_custom_v8',JSON.stringify(customVenues));}catch{}}
+function loadState(){try{return JSON.parse(localStorage.getItem('stevie_v8')||'{}');}catch{return{};}}
+function saveState(s){try{localStorage.setItem('stevie_v8',JSON.stringify(s));}catch{}}
+let S=loadState();
+function gv(id,k,d){return(S[id]&&S[id][k]!==undefined)?S[id][k]:d;}
+function sv(id,k,v){if(!S[id])S[id]={};S[id][k]=v;saveState(S);}
+function allV(){return[...V,...customVenues];}
+
+// ── STATS ──────────────────────────────────────────────────────────────────────
+function updStats(){
+  let r=0,t=0,c=0,p=0,pr=0;
+  allV().forEach(v=>{
+    const s=gv(v.id,'status','not-started');
+    if(s==='reached-out')r++;
+    if(['waiting','discussing','negotiating'].includes(s))t++;
+    if(['confirmed','finalised','payment-pending'].includes(s)){c++;pr++;}
+    if(s==='paid'){p++;pr++;}
+  });
+  document.getElementById('st').textContent=allV().length;
+  document.getElementById('sr').textContent=r;
+  document.getElementById('sk').textContent=t;
+  document.getElementById('sc').textContent=c;
+  document.getElementById('sp').textContent=p;
+  const pct=Math.round((pr/allV().length)*100);
+  document.getElementById('spct').textContent=pct+'%';
+  document.getElementById('sbar').style.width=pct+'%';
+}
+
+
+// ── TOUR DATE FILTER ───────────────────────────────────────────────────────────
+let activeDateFilter=null;
+function filterByDate(key,el){
+  if(activeDateFilter===key){
+    // Click same → clear filter
+    activeDateFilter=null;
+    document.querySelectorAll('.tdf').forEach(d=>d.classList.remove('active'));
+    document.getElementById('fc').value='';
+    filt();
+    return;
+  }
+  activeDateFilter=key;
+  document.querySelectorAll('.tdf').forEach(d=>d.classList.remove('active'));
+  document.querySelectorAll('.tdf').forEach(d=>{
+    if(d.getAttribute('onclick')&&d.getAttribute('onclick').includes("'"+key+"'"))d.classList.add('active');
+  });
+  // Set city filter dropdown
+  const fc=document.getElementById('fc');
+  if(key==='KobeOsaka'){
+    // Show both Kobe and Osaka — clear dropdown and manually filter
+    fc.value='';
+    // Override filt for multi-city
+    filterMultiCity(['Kobe','Osaka']);
+  } else if(key==='TokyoYokohama'){
+    fc.value='';
+    filterMultiCity(['Tokyo','Yokohama']);
+  } else {
+    fc.value=key;
+    filt();
+  }
+}
+function filterMultiCity(cities){
+  const q=document.getElementById('sch').value.toLowerCase();
+  const fs2=document.getElementById('fs').value;
+  const fp=document.getElementById('fp').value;
+  document.querySelectorAll('.vw').forEach(w=>{
+    const id=w.dataset.id;
+    const v=allV().find(x=>x.id===id);
+    if(!v){w.classList.add('hidden');return;}
+    const cs=gv(id,'status','not-started');
+    const cp=gv(id,'priority',DP[v.tag]||'2');
+    let show=cities.includes(v.city);
+    if(show&&q&&!v.name.toLowerCase().includes(q)&&!v.city.toLowerCase().includes(q))show=false;
+    if(show&&fs2&&cs!==fs2)show=false;
+    if(show&&fp&&cp!==fp)show=false;
+    w.classList.toggle('hidden',!show);
+  });
+  document.querySelectorAll('.city').forEach(s=>{
+    s.classList.toggle('hidden',s.querySelectorAll('.vw:not(.hidden)').length===0);
+  });
+}
+
+// ── FILTER ─────────────────────────────────────────────────────────────────────
+function filt(){
+  // Clear date filter active state when manual filter applied
+  if(activeDateFilter){activeDateFilter=null;document.querySelectorAll('.tdf').forEach(d=>d.classList.remove('active'));}
+
+  const q=document.getElementById('sch').value.toLowerCase();
+  const fc=document.getElementById('fc').value;
+  const fs2=document.getElementById('fs').value;
+  const fp=document.getElementById('fp').value;
+  document.querySelectorAll('.vw').forEach(w=>{
+    const id=w.dataset.id;
+    const v=allV().find(x=>x.id===id);
+    if(!v){w.classList.add('hidden');return;}
+    const cs=gv(id,'status','not-started');
+    const cp=gv(id,'priority',DP[v.tag]||'2');
+    let show=true;
+    if(q&&!v.name.toLowerCase().includes(q)&&!v.city.toLowerCase().includes(q))show=false;
+    if(fc&&v.city!==fc)show=false;
+    if(fs2&&cs!==fs2)show=false;
+    if(fp&&cp!==fp)show=false;
+    w.classList.toggle('hidden',!show);
+  });
+  document.querySelectorAll('.city').forEach(s=>{
+    s.classList.toggle('hidden',s.querySelectorAll('.vw:not(.hidden)').length===0);
+  });
+}
+
+// ── PANEL TOGGLE ───────────────────────────────────────────────────────────────
+function togPanel(id,type){
+  const target=document.getElementById(type+'-'+id);
+  const other=document.getElementById((type==='ep'?'np':'ep')+'-'+id);
+  if(target)target.classList.toggle('open');
+  if(other)other.classList.remove('open');
+}
+
+// ── EMAIL TABS ─────────────────────────────────────────────────────────────────
+function swTab(id,tab){
+  ['eng','jp','fu-eng','fu-jp','epk'].forEach(t=>{
+    const b=document.getElementById('eb-'+t+'-'+id);
+    const h=document.getElementById('et-'+t+'-'+id);
+    if(b)b.classList.toggle('active',t===tab);
+    if(h)h.classList.toggle('active',t===tab);
+  });
+}
+
+// ── EDIT / SAVE / TRANSLATE ────────────────────────────────────────────────────
+function startEdit(id){
+  const v=allV().find(x=>x.id===id);
+  document.getElementById('ee-'+id).value=gv(id,'engBody',v.eB);
+  document.getElementById('ed-'+id).style.display='none';
+  document.getElementById('ee-'+id).style.display='block';
+  document.getElementById('ebt-'+id).style.display='none';
+  document.getElementById('sbt-'+id).style.display='inline-block';
+  document.getElementById('cbt-'+id).style.display='inline-block';
+}
+function cancelEdit(id){
+  document.getElementById('ed-'+id).style.display='block';
+  document.getElementById('ee-'+id).style.display='none';
+  document.getElementById('ebt-'+id).style.display='inline-block';
+  document.getElementById('sbt-'+id).style.display='none';
+  document.getElementById('cbt-'+id).style.display='none';
+}
+async function saveTranslate(id){
+  const v=allV().find(x=>x.id===id);
+  const txt=document.getElementById('ee-'+id).value;
+  sv(id,'engBody',txt);
+  document.getElementById('ed-'+id).textContent=txt;
+  cancelEdit(id);
+  await doTranslate(id,txt,v.name,v.city,'jp-disp-'+id,'jpBody');
+}
+
+// ── FOLLOW-UP EDIT ─────────────────────────────────────────────────────────────
+function startFuEdit(id){
+  const v=allV().find(x=>x.id===id);
+  document.getElementById('fee-'+id).value=gv(id,'fuEngBody',v.fB);
+  document.getElementById('fed-'+id).style.display='none';
+  document.getElementById('fee-'+id).style.display='block';
+  document.getElementById('febt-'+id).style.display='none';
+  document.getElementById('fsbt-'+id).style.display='inline-block';
+  document.getElementById('fcbt-'+id).style.display='inline-block';
+}
+function cancelFuEdit(id){
+  document.getElementById('fed-'+id).style.display='block';
+  document.getElementById('fee-'+id).style.display='none';
+  document.getElementById('febt-'+id).style.display='inline-block';
+  document.getElementById('fsbt-'+id).style.display='none';
+  document.getElementById('fcbt-'+id).style.display='none';
+}
+async function saveFuTranslate(id){
+  const v=allV().find(x=>x.id===id);
+  const txt=document.getElementById('fee-'+id).value;
+  sv(id,'fuEngBody',txt);
+  document.getElementById('fed-'+id).textContent=txt;
+  cancelFuEdit(id);
+  await doTranslate(id,txt,v.name,v.city,'fjd-'+id,'fuJpBody');
+}
+
+async function doTranslate(id,eng,vname,city,dispId,storeKey){
+  const dot=document.getElementById('tld-'+id);
+  const msg=document.getElementById('tlm-'+id);
+  dot.className='tld spin';msg.textContent='Translating...';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:'Translate this booking email from Stevie (Chennai, India) into natural respectful Japanese for '+vname+' in '+city+'. Use keigo and 謙譲語. Warm but deferential. Sign off with Stevie in Japanese style. Return ONLY the Japanese body.\n\n'+eng}]})});
+    const d=await r.json();
+    const jp=d.content&&d.content[0]?d.content[0].text.trim():'';
+    if(jp){sv(id,storeKey,jp);document.getElementById(dispId).textContent=jp;dot.className='tld done';msg.textContent='Updated ✓';setTimeout(()=>{dot.className='tld';msg.textContent='';},3000);}
+    else throw'';
+  }catch{dot.className='tld err';msg.textContent='Failed';setTimeout(()=>{dot.className='tld';msg.textContent='';},4000);}
+}
+
+// ── STATUS / PRIORITY / NOTES / DATES ─────────────────────────────────────────
+function applyStatus(id,val){
+  const el=document.getElementById('ss-'+id);if(!el)return;
+  const sc=SC[val]||SC['not-started'];
+  el.style.background=sc.bg;el.style.color=sc.cl;el.style.borderColor=sc.bd;
+}
+function onSt(id,val){
+  sv(id,'status',val);applyStatus(id,val);
+  if(val==='reached-out'&&!gv(id,'dateOut','')){
+    const today=new Date().toISOString().slice(0,10);
+    sv(id,'dateOut',today);
+    const np=document.getElementById('np-'+id);
+    if(np){const di=np.querySelectorAll('input[type="date"]');if(di[0])di[0].value=today;}
+  }
+  updStats();
+}
+function onPr(id,val){sv(id,'priority',val);}
+function onNo(id,val){
+  sv(id,'notes',val);
+  const b=document.getElementById('nb-'+id);if(!b)return;
+  const n=val.trim().split('\n').filter(Boolean).length;
+  b.textContent=val.trim()?'Notes ('+n+')':'+ Notes';
+  b.className='tog ntog'+(val.trim()?' has':'');
+}
+function onDt(id,k,val){
+  sv(id,k,val);
+  if(k==='showDate'){const c=document.getElementById('sd-'+id);if(c)c.innerHTML=val?'<strong>'+val+'</strong>':'<span style="color:#b0bfd0">No date set</span>';}
+}
+
+// ── COPY EMAIL ─────────────────────────────────────────────────────────────────
+function copyE(id,type){
+  const v=allV().find(x=>x.id===id);
+  let subj,body;
+  if(type==='eng'){subj=v.eS;body=gv(id,'engBody',v.eB);}
+  else if(type==='jp'){subj=v.jS;body=gv(id,'jpBody',v.jB);}
+  else if(type==='fu'){subj=v.fS;body=gv(id,'fuEngBody',v.fB);}
+  else{subj=v.fjS;body=gv(id,'fuJpBody',v.fjB);}
+  const isJ=type==='jp'||type==='fj';
+  const txt=(isJ?'件名：':'Subject: ')+subj+'\n\n'+body;
+  navigator.clipboard.writeText(txt).catch(()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);});
+  const btn=document.getElementById('cb-'+type+'-'+id);
+  if(!btn)return;
+  const orig=btn.textContent;btn.textContent='Copied!';btn.classList.add('ok');
+  setTimeout(()=>{btn.textContent=orig;btn.classList.remove('ok');},2000);
+}
+
+// ── EPK TAB ────────────────────────────────────────────────────────────────────
+function renderEPKTab(id){
+  const w=mk('div','epk-tab-wrap');
+  // Switcher
+  const sw=mk('div','epk-switcher');
+  ['s','c'].forEach(who=>{
+    const btn=mk('button','epk-sw-btn'+(who==='s'?' active':''));
+    btn.textContent=who==='s'?'★ Stevie EPK':'Chris Jason EPK';
+    btn.id='epksw-'+who+'-'+id;
+    btn.onclick=()=>showEPK(id,who);
+    sw.appendChild(btn);
+  });
+  w.appendChild(sw);
+
+  ['s','c'].forEach(who=>{
+    const isS=who==='s';
+    const pane=mk('div','epk-pane'+(isS?' active':''));
+    pane.id='epkpane-'+who+'-'+id;
+
+    // Bio
+    const bioSec=mk('div','epk-section');
+    const bl=mk('div','epk-label');bl.textContent='Bio';bioSec.appendChild(bl);
+    const bd=mk('div','epk-bio');bd.textContent=isS?STEVIE_BIO:CHRIS_BIO;bioSec.appendChild(bd);
+    const cpb=mk('button','epk-copy-bio');cpb.textContent='Copy bio';
+    cpb.onclick=()=>{
+      navigator.clipboard.writeText(isS?STEVIE_BIO:CHRIS_BIO).catch(()=>{});
+      cpb.textContent='Copied!';cpb.classList.add('ok');
+      setTimeout(()=>{cpb.textContent='Copy bio';cpb.classList.remove('ok');},2000);
+    };
+    bioSec.appendChild(cpb);pane.appendChild(bioSec);
+
+    // Stats
+    const statSec=mk('div','epk-section');
+    const sl=mk('div','epk-label');sl.textContent='Stats';statSec.appendChild(sl);
+    const sd=mk('div','epk-stats');
+    (isS?['500K+ Spotify streams','250K+ listeners worldwide','Best Young Indie Artist — Radio City 2018','Rolling Stone India · Vogue · ScoopWhoop','Shared stages: Plini · Junkyard Groove · Girish & the Chronicles']:
+         ['70+ film credits','200+ released songs','60K+ streams on debut single','Opened for Shubh Saran (2024)']).forEach(s=>{
+      const sp=mk('span','epk-stat');sp.textContent=s;sd.appendChild(sp);
+    });
+    statSec.appendChild(sd);pane.appendChild(statSec);
+
+    // Links
+    const lkSec=mk('div','epk-section');
+    const ll=mk('div','epk-label');ll.textContent=isS?'EPK & Listen':'Listen / Watch';lkSec.appendChild(ll);
+    const ld=mk('div','epk-links');
+    const links=isS?[
+      ['★ Stevie EPK 2026 (Full Press Kit)',STEVIE_EPK_URL,'EPK'],
+      ['Self-Titled Debut EP','https://open.spotify.com/album/0X1bwctgFOQow6K75Iae8x','Spotify'],
+      ['Like I Do (Pop)','https://open.spotify.com/album/4g9D7g1zK4UNYAM2FwIrWZ','Spotify'],
+      ['Cul-de-sac (Rap/Drill)','https://open.spotify.com/album/6PnSgUKpVFcFMAQ7mdVvhM','Spotify'],
+      ['Lighthouse (Official Video)','https://www.youtube.com/watch?v=Kw3_G7fjaHw','YouTube'],
+      ['Burn @ Sofar Sounds Bangalore','https://www.youtube.com/watch?v=mNPX02vCyDk','YouTube'],
+    ]:[
+      ['Spotify Profile','https://open.spotify.com/search/Chris%20Jason%20guitarist','Spotify'],
+      ['YouTube Channel','https://www.youtube.com/@christhejason','YouTube'],
+    ];
+    links.forEach(([title,url,src])=>{
+      const a=mk('a','epk-link');a.href=url;a.target='_blank';
+      const sp=mk('span');sp.textContent=title;
+      const sr=mk('span');sr.textContent=src+' →';
+      a.appendChild(sp);a.appendChild(sr);ld.appendChild(a);
+    });
+    lkSec.appendChild(ld);pane.appendChild(lkSec);
+
+    // Download Chris EPK PDF (Chris pane only)
+    if(!isS){
+      const dlSec=mk('div','epk-section');
+      const dll=mk('div','epk-label');dll.textContent='Download EPK PDF';dlSec.appendChild(dll);
+      const note=mk('div','epk-attach-note');note.textContent='Attach Chris Jason EPK when pitching the double bill.';dlSec.appendChild(note);
+      const dlBtn=mk('a','epk-dl-btn');
+      dlBtn.href='Chris_Jason_EPK.pdf';
+      dlBtn.download='Chris_Jason_EPK.pdf';
+      dlBtn.target='_blank';
+      dlBtn.textContent='↓ Download Chris Jason EPK PDF';
+      dlSec.appendChild(dlBtn);
+      // Note below button
+      const dlNote2=mk('div');
+      dlNote2.style.cssText='font-family:var(--font);font-size:6px;color:var(--gray);margin-top:6px;line-height:1.8';
+      dlNote2.textContent='PDF must be in same folder as index.html on Netlify.';
+      dlSec.appendChild(dlNote2);
+      pane.appendChild(dlSec);
+    }
+
+    // Contact
+    const cSec=mk('div','epk-section');
+    const cl=mk('div','epk-label');cl.textContent='Contact';cSec.appendChild(cl);
+    const cd=mk('div','epk-contact');
+    cd.innerHTML=isS?'<b>Manager:</b> Siddharth Nair — Oaf Records — holler@oaf.ltd<br><b>Artist:</b> steviechennai@gmail.com<br><b>Instagram:</b> @crayonsaretasty':
+                    '<b>Email:</b> chrishashisid@hotmail.com<br><b>Phone:</b> +91 8939 575580<br><b>Instagram:</b> @christhejason';
+    cSec.appendChild(cd);pane.appendChild(cSec);
+
+    w.appendChild(pane);
+  });
+  return w;
+}
+
+function showEPK(id,who){
+  ['s','c'].forEach(w=>{
+    const p=document.getElementById('epkpane-'+w+'-'+id);
+    const b=document.getElementById('epksw-'+w+'-'+id);
+    if(p)p.classList.toggle('active',w===who);
+    if(b)b.classList.toggle('active',w===who);
+  });
+}
+
+// ── RENDER HELPERS ─────────────────────────────────────────────────────────────
+function mk(tag,cls){const el=document.createElement(tag);if(cls)el.className=cls;return el;}
+
+const icoPhone='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.22 1.18 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.56-.56a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>';
+const icoMail='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>';
+const icoWeb='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>';
+const icoIG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>';
+
+// ── RENDER VENUES ──────────────────────────────────────────────────────────────
+
+const CITY_ORDER={Kobe:1,Osaka:1,Kyoto:2,Nagoya:3,Tokyo:4,Yokohama:4};
+const SKIP_ST=['reached-out','waiting','discussing','negotiating','confirmed','finalised','payment-pending','paid','declined'];
+function buildSendOrder(){
+  const list=document.getElementById('so-list');
+  if(!list)return;
+  list.innerHTML='';
+  const venues=allV().filter(v=>!SKIP_ST.includes(gv(v.id,'status','not-started')));
+  if(!venues.length){
+    const msg=mk('div');msg.style.cssText='font-family:var(--font);font-size:8px;color:var(--green);text-align:center;padding:20px';
+    msg.textContent='All venues contacted!';list.appendChild(msg);return;
+  }
+  venues.sort((a,b)=>{
+    const cd=(CITY_ORDER[a.city]||5)-(CITY_ORDER[b.city]||5);if(cd)return cd;
+    const pd=parseInt(gv(a.id,'priority','2'))-parseInt(gv(b.id,'priority','2'));if(pd)return pd;
+    return(parseFloat(b.rating)||0)-(parseFloat(a.rating)||0);
+  });
+  const blocks=[['Kobe / Osaka — Aug 13 or 15',['Kobe','Osaka']],
+                ['Kyoto — Aug 16 or 17',['Kyoto']],
+                ['Nagoya — Aug 18 or 19',['Nagoya']],
+                ['Tokyo / Yokohama — Aug 20–23',['Tokyo','Yokohama']]];
+  let n=1;
+  blocks.forEach(([bName,cities])=>{
+    const bv=venues.filter(v=>cities.includes(v.city));
+    if(!bv.length)return;
+    const bh=mk('div');
+    bh.style.cssText='font-family:var(--font);font-size:8px;color:var(--yellow);text-transform:uppercase;letter-spacing:.5px;padding:10px 0 6px;border-bottom:2px solid var(--darkyellow);margin-bottom:8px;margin-top:14px';
+    bh.textContent=bName;list.appendChild(bh);
+    bv.forEach(v=>{
+      const pri=gv(v.id,'priority','2');
+      const priColor=pri==='1'?'var(--red)':pri==='2'?'var(--yellow)':'var(--gray)';
+      const priLabel=pri==='1'?'HIGH':pri==='2'?'MED':'LOW';
+      const contact=v.email?v.email:v.ig?'@'+v.ig:v.phone?v.phone:'website / form';
+      const row=mk('div');
+      row.style.cssText='display:grid;grid-template-columns:32px 1fr auto;gap:12px;align-items:center;padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);margin-bottom:6px';
+      const num=mk('div');num.style.cssText='font-family:var(--font);font-size:16px;color:var(--yellow);text-align:center';num.textContent=n++;row.appendChild(num);
+      const info=mk('div');
+      const vn=mk('div');vn.style.cssText='font-family:var(--font);font-size:9px;color:var(--white);margin-bottom:4px';vn.textContent=v.name;
+      const vm2=mk('div');vm2.style.cssText='font-family:var(--font);font-size:7px;line-height:1.8';
+      const cs=mk('span');cs.style.color='var(--gray)';cs.textContent=v.city+(v.rating?' · ★'+v.rating:'');
+      const sep=mk('span');sep.style.color='var(--darkgray)';sep.textContent=' · ';
+      const ps=mk('span');ps.style.color=priColor;ps.textContent=priLabel+' PRIORITY';
+      vm2.appendChild(cs);vm2.appendChild(sep);vm2.appendChild(ps);
+      const vc=mk('div');vc.style.cssText='font-family:var(--font);font-size:7px;color:var(--blue);margin-top:2px';vc.textContent=contact;
+      info.appendChild(vn);info.appendChild(vm2);info.appendChild(vc);row.appendChild(info);
+      const btn=mk('button');
+      btn.style.cssText='font-family:var(--font);font-size:7px;padding:8px 11px;background:var(--green);color:var(--white);border:2px solid var(--darkgreen);cursor:pointer;box-shadow:2px 2px 0 var(--black);text-transform:uppercase;white-space:nowrap;letter-spacing:.3px';
+      btn.textContent='Mark sent';
+      btn.addEventListener('click',function(){
+        onSt(v.id,'reached-out');
+        row.style.opacity='0.35';btn.textContent='Sent ✓';
+        btn.style.background='var(--darkgray)';btn.style.borderColor='var(--darkgray)';btn.disabled=true;
+        setTimeout(()=>buildSendOrder(),600);
+      });
+      row.appendChild(btn);list.appendChild(row);
+    });
+  });
+}
+function openSendOrder(){document.getElementById('so-overlay').style.display='block';document.body.style.overflow='hidden';buildSendOrder();}
+function closeSendOrder(){document.getElementById('so-overlay').style.display='none';document.body.style.overflow='';}
+
+function renderVenues(){
+  const cont=document.getElementById('vc');
+  cont.innerHTML='';
+  const cities=[...new Set(allV().map(v=>v.city))];
+  cities.forEach(city=>{
+    const cv=allV().filter(v=>v.city===city);
+    const sec=mk('div','city');
+    const lbl=mk('div','clbl');
+    lbl.innerHTML=city+'<span class="cnt">'+cv.length+' venues</span><span class="dh">'+(CDATES[city]||'')+'</span>';
+    sec.appendChild(lbl);
+    cont.appendChild(sec);
+
+    cv.forEach(v=>{
+      const status=gv(v.id,'status','not-started');
+      const priority=gv(v.id,'priority',DP[v.tag]||'2');
+      const notes=gv(v.id,'notes','');
+      const dOut=gv(v.id,'dateOut','');
+      const dRep=gv(v.id,'dateReply','');
+      const dShow=gv(v.id,'showDate','');
+      const engB=gv(v.id,'engBody',v.eB);
+      const jpB=gv(v.id,'jpBody',v.jB);
+      const fuEngB=gv(v.id,'fuEngBody',v.fB);
+      const fuJpB=gv(v.id,'fuJpBody',v.fjB);
+      const sc=SC[status]||SC['not-started'];
+      const noteN=notes.trim()?notes.trim().split('\n').filter(Boolean).length:0;
+
+      // Wrapper
+      const vw=mk('div','vw');vw.dataset.id=v.id;sec.appendChild(vw);
+
+      // ROW
+      const row=mk('div','vr');
+      // col1 name
+      const col1=mk('div');
+      const vn=mk('div','vn');vn.textContent=v.name;
+      if(v.tag==='top')vn.appendChild(Object.assign(mk('span','badge bt'),{textContent:' top pick'}));
+      if(v.tag==='legendary')vn.appendChild(Object.assign(mk('span','badge bl'),{textContent:' legendary'}));
+      if(v.tag==='prestige')vn.appendChild(Object.assign(mk('span','badge bt'),{textContent:' prestige'}));
+      if(v.tag==='new')vn.appendChild(Object.assign(mk('span','badge bn'),{textContent:' new'}));
+      if(v.eng)vn.appendChild(Object.assign(mk('span','badge be'),{textContent:' English'}));
+      if(v._custom)vn.appendChild(Object.assign(mk('span','badge bn'),{textContent:' custom'}));
+      col1.appendChild(vn);
+      const vm2=mk('div','vm');
+      if(v.rating){const rs=mk('span');rs.textContent='★ '+v.rating+(v.rc?' ('+v.rc+')':'');vm2.appendChild(rs);const dot=mk('span');dot.style.color='#d0d8e4';dot.textContent='·';vm2.appendChild(dot);}
+      const fs2=mk('span');fs2.textContent=v.fee;vm2.appendChild(fs2);
+      const dot2=mk('span');dot2.style.color='#d0d8e4';dot2.textContent='·';vm2.appendChild(dot2);
+      const cs2=mk('span');cs2.textContent=v.cap;vm2.appendChild(cs2);
+      col1.appendChild(vm2);row.appendChild(col1);
+      // col2 status
+      const sel=mk('select','ssel');sel.id='ss-'+v.id;
+      sel.style.background=sc.bg;sel.style.color=sc.cl;sel.style.borderColor=sc.bd;
+      Object.entries(SL).forEach(([k,l])=>{const o=mk('option');o.value=k;o.textContent=l;if(k===status)o.selected=true;sel.appendChild(o);});
+      sel.addEventListener('change',function(){onSt(v.id,this.value);});
+      const col2=mk('div');col2.appendChild(sel);row.appendChild(col2);
+      // col3 priority
+      const psel=mk('select','psel');
+      [['1','High'],['2','Medium'],['3','Low']].forEach(([val,lbl2])=>{const o=mk('option');o.value=val;o.textContent=lbl2;if(val===priority)o.selected=true;psel.appendChild(o);});
+      psel.addEventListener('change',function(){onPr(v.id,this.value);});
+      const col3=mk('div');col3.appendChild(psel);row.appendChild(col3);
+      // col4 date
+      const sdc=mk('div','sdc');sdc.id='sd-'+v.id;
+      sdc.innerHTML=dShow?'<strong>'+dShow+'</strong>':'<span style="color:#b0bfd0">No date set</span>';
+      row.appendChild(sdc);
+      // col5 email
+      const etog=mk('button','tog etog');etog.textContent='✉ Emails';
+      etog.addEventListener('click',()=>togPanel(v.id,'ep'));
+      const col5=mk('div');col5.appendChild(etog);row.appendChild(col5);
+      // col6 notes
+      const ntog=mk('button','tog ntog'+(noteN?' has':''));ntog.id='nb-'+v.id;
+      ntog.textContent=noteN?'Notes ('+noteN+')':'+ Notes';
+      ntog.addEventListener('click',()=>togPanel(v.id,'np'));
+      const col6=mk('div');col6.appendChild(ntog);row.appendChild(col6);
+      vw.appendChild(row);
+
+      // EMAIL PANEL
+      const ep=mk('div','panel ep');ep.id='ep-'+v.id;
+
+      // Tabs row
+      const tabs=mk('div','etabs');
+      [['eng','English',false],['jp','日本語',false],['fu-eng','Follow-up EN',true],['fu-jp','Follow-up JP',true]].forEach(([key,label,isFu])=>{
+        const t=mk('button','etab'+(isFu?' fu':'')+(key==='eng'?' active':''));
+        t.id='et-'+key+'-'+v.id;t.textContent=label;
+        if(key==='epk'){t.style.background='var(--yellow)';t.style.color='var(--darkred)';t.style.borderColor='var(--darkyellow)';}
+        t.addEventListener('click',()=>swTab(v.id,key));
+        tabs.appendChild(t);
+      });
+      const tlDiv=mk('div','tls');
+      const tld=mk('span','tld');tld.id='tld-'+v.id;
+      const tlm=mk('span');tlm.id='tlm-'+v.id;tlm.style.fontSize='11px';tlm.style.color='var(--gray)';
+      tlDiv.appendChild(tld);tlDiv.appendChild(tlm);tabs.appendChild(tlDiv);
+      ep.appendChild(tabs);
+
+      // English block
+      const engBlk=mk('div','eblk active');engBlk.id='eb-eng-'+v.id;
+      const esr1=mk('div','esr');const esl1=mk('span','esl');esl1.textContent='Subject:';
+      const esv1=mk('span','esv');esv1.textContent=v.eS;
+      esr1.appendChild(esl1);esr1.appendChild(esv1);engBlk.appendChild(esr1);
+      const ed=mk('div','ebody');ed.id='ed-'+v.id;engBlk.appendChild(ed);
+      const ee=mk('textarea','eedit');ee.id='ee-'+v.id;ee.style.display='none';engBlk.appendChild(ee);
+      const eact=mk('div','eact');
+      const cben=mk('button','cpybtn');cben.id='cb-eng-'+v.id;cben.textContent='Copy';cben.addEventListener('click',()=>copyE(v.id,'eng'));
+      const ebt=mk('button','editbtn');ebt.id='ebt-'+v.id;ebt.textContent='Edit';ebt.addEventListener('click',()=>startEdit(v.id));
+      const sbt=mk('button','savebtn');sbt.id='sbt-'+v.id;sbt.textContent='Save + auto-translate JP';sbt.style.display='none';sbt.addEventListener('click',()=>saveTranslate(v.id));
+      const cbt=mk('button','editbtn');cbt.id='cbt-'+v.id;cbt.textContent='Cancel';cbt.style.display='none';cbt.addEventListener('click',()=>cancelEdit(v.id));
+      [cben,ebt,sbt,cbt].forEach(b=>eact.appendChild(b));engBlk.appendChild(eact);ep.appendChild(engBlk);
+
+      // JP block
+      const jpBlk=mk('div','eblk');jpBlk.id='eb-jp-'+v.id;
+      const esr2=mk('div','esr');const esl2=mk('span','esl');esl2.textContent='件名:';
+      const esv2=mk('span','esv');esv2.style.fontSize='12px';esv2.textContent=v.jS;
+      esr2.appendChild(esl2);esr2.appendChild(esv2);jpBlk.appendChild(esr2);
+      const jd=mk('div','ebody');jd.id='jp-disp-'+v.id;jpBlk.appendChild(jd);
+      const jact=mk('div','eact');
+      const cbjp=mk('button','cpybtn');cbjp.id='cb-jp-'+v.id;cbjp.textContent='メールをコピー';cbjp.addEventListener('click',()=>copyE(v.id,'jp'));
+      jact.appendChild(cbjp);jpBlk.appendChild(jact);ep.appendChild(jpBlk);
+
+      // Follow-up EN block
+      const fuBlk=mk('div','eblk');fuBlk.id='eb-fu-eng-'+v.id;
+      const fubadge=mk('span','fubadge');fubadge.textContent='Follow-up — send ~2 weeks after first outreach';fuBlk.appendChild(fubadge);
+      const esr3=mk('div','esr');const esl3=mk('span','esl');esl3.textContent='Subject:';
+      const esv3=mk('span','esv');esv3.textContent=v.fS;esr3.appendChild(esl3);esr3.appendChild(esv3);fuBlk.appendChild(esr3);
+      const fed=mk('div','ebody');fed.id='fed-'+v.id;fuBlk.appendChild(fed);
+      const fee=mk('textarea','eedit');fee.id='fee-'+v.id;fee.style.display='none';fuBlk.appendChild(fee);
+      const fuact=mk('div','eact');
+      const cbfu=mk('button','cpybtn');cbfu.id='cb-fu-'+v.id;cbfu.textContent='Copy';cbfu.addEventListener('click',()=>copyE(v.id,'fu'));
+      const febt=mk('button','editbtn');febt.id='febt-'+v.id;febt.textContent='Edit';febt.addEventListener('click',()=>startFuEdit(v.id));
+      const fsbt=mk('button','savebtn');fsbt.id='fsbt-'+v.id;fsbt.textContent='Save + auto-translate JP';fsbt.style.display='none';fsbt.addEventListener('click',()=>saveFuTranslate(v.id));
+      const fcbt=mk('button','editbtn');fcbt.id='fcbt-'+v.id;fcbt.textContent='Cancel';fcbt.style.display='none';fcbt.addEventListener('click',()=>cancelFuEdit(v.id));
+      [cbfu,febt,fsbt,fcbt].forEach(b=>fuact.appendChild(b));fuBlk.appendChild(fuact);ep.appendChild(fuBlk);
+
+      // Follow-up JP block
+      const fujBlk=mk('div','eblk');fujBlk.id='eb-fu-jp-'+v.id;
+      const fujbadge=mk('span','fubadge');fujbadge.textContent='フォローアップ — 最初の連絡から約2週間後';fujBlk.appendChild(fujbadge);
+      const esr4=mk('div','esr');const esl4=mk('span','esl');esl4.textContent='件名:';
+      const esv4=mk('span','esv');esv4.style.fontSize='12px';esv4.textContent=v.fjS;esr4.appendChild(esl4);esr4.appendChild(esv4);fujBlk.appendChild(esr4);
+      const fjd=mk('div','ebody');fjd.id='fjd-'+v.id;fujBlk.appendChild(fjd);
+      const fjact=mk('div','eact');
+      const cjfu=mk('button','cpybtn');cjfu.id='cb-fj-'+v.id;cjfu.textContent='メールをコピー';cjfu.addEventListener('click',()=>copyE(v.id,'fj'));
+      fjact.appendChild(cjfu);fujBlk.appendChild(fjact);ep.appendChild(fujBlk);
+
+      // (EPK is shown globally at top of page)
+
+      vw.appendChild(ep);
+
+      // NOTES PANEL
+      const np=mk('div','panel np');np.id='np-'+v.id;
+      // contact grid
+      const cgrid=mk('div','cgrid');
+      const pcb=mk('div','cb');const pch=mk('h4');pch.textContent='Contact';pcb.appendChild(pch);
+      if(v.phone){const ci=mk('div','ci');ci.innerHTML=icoPhone;const a=mk('a');a.href='tel:'+v.phone;a.textContent=v.phone;ci.appendChild(a);pcb.appendChild(ci);}
+      if(v.email){const ci=mk('div','ci');ci.innerHTML=icoMail;const a=mk('a');a.href='mailto:'+v.email;a.textContent=v.email;ci.appendChild(a);pcb.appendChild(ci);}
+      if(v.web){const ci=mk('div','ci');ci.innerHTML=icoWeb;const a=mk('a');a.href=v.web;a.target='_blank';a.textContent=v.web.replace(/https?:\/\//,'').split('/')[0];ci.appendChild(a);pcb.appendChild(ci);}
+      if(!v.phone&&!v.email&&!v.web){const nm=mk('div');nm.style.cssText='font-size:11px;color:#b0bfd0;font-family:var(--font)';nm.textContent='Use contact form or Instagram';pcb.appendChild(nm);}
+      cgrid.appendChild(pcb);
+      const scb=mk('div','cb');const sch2=mk('h4');sch2.textContent='Social';scb.appendChild(sch2);
+      if(v.ig){const ci=mk('div','ci');ci.innerHTML=icoIG;const a=mk('a');a.href='https://instagram.com/'+v.ig;a.target='_blank';a.textContent='@'+v.ig;ci.appendChild(a);scb.appendChild(ci);}
+      else{const nm=mk('div');nm.style.cssText='font-size:11px;color:#b0bfd0;font-family:var(--font)';nm.textContent='Search on Instagram / X';scb.appendChild(nm);}
+      cgrid.appendChild(scb);
+      np.appendChild(cgrid);
+      if(v.tip){const tip=mk('div','tip');const tb=mk('b');tb.textContent='Outreach tip: ';tip.appendChild(tb);tip.appendChild(document.createTextNode(v.tip));np.appendChild(tip);}
+      // dates
+      const drow=mk('div','drow');
+      [['dateOut','Reached out:',dOut],['dateReply','Reply received:',dRep],['showDate','Show date:',dShow]].forEach(([k,lbl2,val])=>{
+        const dg=mk('div','dg');const l=mk('label');l.textContent=lbl2;
+        const inp=mk('input');inp.type='date';inp.value=val;inp.addEventListener('change',function(){onDt(v.id,k,this.value);});
+        dg.appendChild(l);dg.appendChild(inp);drow.appendChild(dg);
+      });
+      np.appendChild(drow);
+      const ta=mk('textarea');ta.placeholder='Notes — deal terms, contact name, agreed fee, follow-up reminders...';ta.textContent=notes;ta.addEventListener('input',function(){onNo(v.id,this.value);});
+      np.appendChild(ta);
+      vw.appendChild(np);
+
+      // SET TEXT CONTENT SAFELY after all elements in DOM
+      const edEl=document.getElementById('ed-'+v.id);edEl.textContent=engB;linkifyEPK(edEl);
+      const jpEl=document.getElementById('jp-disp-'+v.id);jpEl.textContent=jpB;linkifyJpEPK(jpEl);
+      document.getElementById('fed-'+v.id).textContent=fuEngB;
+      document.getElementById('fjd-'+v.id).textContent=fuJpB;
+    });
+  });
+  updStats();
+}
+
+
+// ── GLOBAL EPK ────────────────────────────────────────────────────────────────
+function renderGlobalEPK(){
+  const cont=document.getElementById('global-epk-content');
+  if(!cont||cont.dataset.rendered)return;
+  cont.appendChild(renderEPKTab('global'));
+  cont.dataset.rendered='1';
+}
+function toggleGlobalEPK(){
+  const cont=document.getElementById('global-epk-content');
+  const lbl=document.getElementById('epk-toggle-label');
+  if(!cont)return;
+  const btn=document.getElementById('epk-main-btn');
+  if(cont.style.display==='none'){
+    renderGlobalEPK();
+    cont.style.display='block';
+    if(btn)btn.textContent='▲ Hide EPKs';
+  } else {
+    cont.style.display='none';
+    if(btn)btn.textContent='▼ View EPKs';
+  }
+}
+
+
+// Make EPK URL clickable in email display divs
+function linkifyEPK(el){
+  if(!el)return;
+  const url='https://stevie-epk-2026.netlify.app/';
+  const phrase='You can find my EPK here';
+  if(el.textContent.includes(phrase)){
+    const txt=el.textContent;
+    const parts=txt.split(phrase);
+    el.textContent='';
+    parts.forEach((part,i)=>{
+      el.appendChild(document.createTextNode(part));
+      if(i<parts.length-1){
+        const before=document.createTextNode('You can find my EPK ');
+        const a=document.createElement('a');
+        a.href=url;a.target='_blank';a.textContent='here';
+        a.style.cssText='color:var(--yellow);font-weight:bold;text-decoration:underline;font-family:var(--font)';
+        el.appendChild(before);el.appendChild(a);
+      }
+    });
+  }
+}
+function linkifyJpEPK(el){
+  if(!el)return;
+  const url='https://stevie-epk-2026.netlify.app/';
+  // JP phrase: "EPKはこちらからご覧いただけます" — make "こちら" the link
+  const phrase='EPKはこちらからご覧いただけます';
+  if(el.textContent.includes(phrase)){
+    const txt=el.textContent;
+    const parts=txt.split(phrase);
+    el.textContent='';
+    parts.forEach((part,i)=>{
+      el.appendChild(document.createTextNode(part));
+      if(i<parts.length-1){
+        el.appendChild(document.createTextNode('EPKは'));
+        const a=document.createElement('a');
+        a.href=url;a.target='_blank';a.textContent='こちら';
+        a.style.cssText='color:var(--yellow);font-weight:bold;text-decoration:underline;font-family:var(--font)';
+        el.appendChild(a);
+        el.appendChild(document.createTextNode('からご覧いただけます'));
+      }
+    });
+  }
+}
+
+// ── ADD VENUE ──────────────────────────────────────────────────────────────────
+function avAutoSubjects(){
+  const name=document.getElementById('av-name').value.trim();
+  const city=document.getElementById('av-city').value;
+  if(name&&city){
+    const dates=CITY_DATES_LOCAL[city]||'August 2025';
+    document.getElementById('av-eS').value='Booking Inquiry — Stevie, Singer-Songwriter from India · '+dates;
+    document.getElementById('av-fS').value='Following Up — Stevie · August Booking, '+name;
+    document.getElementById('av-jS').value='出演のご依頼について — Stevie（シンガーソングライター、インド・チェンナイ）';
+  }
+}
+
+async function avGenEmails(){
+  const name=document.getElementById('av-name').value.trim();
+  const city=document.getElementById('av-city').value;
+  const fee=document.getElementById('av-fee').value;
+  const cap=document.getElementById('av-cap').value.trim();
+  if(!name||!city){alert('Please fill in venue name and city first.');return;}
+  const status=document.getElementById('av-gen-status');
+  status.textContent='Generating English email...';status.style.color='var(--yellow)';
+  const dates=CITY_DATES_LOCAL[city]||'August 2025';
+  const prompt='Write a warm, professional booking inquiry email from singer-songwriter Stevie (Chennai, India) to '+name+', an intimate live venue in '+city+', Japan (capacity: '+(cap||'small')+', fee: '+fee+'). Available dates: '+dates+'. Structure exactly:\n1. Opening paragraph: specific reason Stevie chose THIS venue (warm, research-based hook)\n2. This exact text verbatim: "'+STEVIE_CREDS+'"\n3. Availability sentence mentioning Summersonic Aug 14 and the dates\n4. This exact line verbatim: "You can find my EPK at '+STEVIE_EPK_URL+'"\n5. This exact line verbatim: "'+CHRIS_LINE+'"\n6. Close: "I\'ve looped in my manager and would love to discuss possibilities at your convenience."\n7. Sign-off: Warmly,\nStevie\nSinger-Songwriter | Chennai, India\n'+MGMT_LINE+'\n\nReturn ONLY the email body, no subject line.';
+  try{
+    const r1=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:prompt}]})});
+    const d1=await r1.json();
+    const engBody=d1.content&&d1.content[0]?d1.content[0].text.trim():'';
+    if(!engBody)throw'No content';
+    document.getElementById('av-eB').value=engBody;
+    avAutoSubjects();
+    document.getElementById('av-fB').value='Dear '+name+' Team,\n\nFollowing up on a booking inquiry from a couple of weeks ago about '+dates+'.\n\nWould love to make '+name+' part of the tour if there\'s any availability. Happy to provide any additional information.\n\nWarmly,\nStevie\nSinger-Songwriter | Chennai, India\n'+MGMT_LINE;
+    status.textContent='Translating to Japanese...';
+    const r2=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:'Translate into natural respectful Japanese for '+name+' in '+city+'. Use keigo and 謙譲語. Warm but deferential. Sign off with Stevie name in Japanese style. Return ONLY the Japanese body.\n\n'+engBody}]})});
+    const d2=await r2.json();
+    const jpBody=d2.content&&d2.content[0]?d2.content[0].text.trim():'';
+    if(jpBody)document.getElementById('av-jB').value=jpBody;
+    status.textContent='✓ Done!';status.style.color='var(--green)';
+  }catch(e){status.textContent='Failed — fill in manually';status.style.color='var(--red)';}
+}
+
+function openAddVenue(){
+  document.getElementById('av-overlay').style.display='block';
+  document.body.style.overflow='hidden';
+  ['av-name','av-cap','av-phone','av-email','av-web','av-ig','av-tip','av-eS','av-eB','av-jS','av-jB','av-fS','av-fB','av-rating','av-rc'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  document.getElementById('av-city').value='';
+  document.getElementById('av-fee').value='Door split';
+  document.getElementById('av-eng').checked=false;
+  document.getElementById('av-gen-status').textContent='';
+}
+
+function closeAddVenue(){
+  document.getElementById('av-overlay').style.display='none';
+  document.body.style.overflow='';
+}
+
+function submitAddVenue(){
+  const name=document.getElementById('av-name').value.trim();
+  const city=document.getElementById('av-city').value;
+  if(!name){alert('Please enter a venue name.');return;}
+  if(!city){alert('Please select a city.');return;}
+  const ig=(document.getElementById('av-ig').value||'').replace('@','').trim();
+  const id='custom-'+Date.now();
+  const venue={
+    id,city,name,tag:'',fee:document.getElementById('av-fee').value,
+    eng:document.getElementById('av-eng').checked,
+    rating:document.getElementById('av-rating').value.trim()||'',
+    rc:document.getElementById('av-rc').value.trim()||'',
+    phone:document.getElementById('av-phone').value.trim()||null,
+    web:document.getElementById('av-web').value.trim()||null,
+    email:document.getElementById('av-email').value.trim()||null,
+    ig:ig||null,tw:null,
+    cap:document.getElementById('av-cap').value.trim()||'Intimate',
+    tip:document.getElementById('av-tip').value.trim()||'',
+    eS:document.getElementById('av-eS').value.trim()||'Booking Inquiry — Stevie · August 2025',
+    eB:document.getElementById('av-eB').value.trim()||'[Add email body]',
+    jS:document.getElementById('av-jS').value.trim()||'出演のご依頼について — Stevie',
+    jB:document.getElementById('av-jB').value.trim()||'[Add Japanese email]',
+    fS:document.getElementById('av-fS').value.trim()||'Following Up — Stevie · August Booking',
+    fB:document.getElementById('av-fB').value.trim()||'[Add follow-up body]',
+    fjS:'出演のご依頼について — 再度のご連絡（Stevie）',
+    fjB:'先日ご連絡差し上げましたStevieと申します。引き続きよろしくお願い申し上げます。\n\n敬具\nStevie\n'+MGMT_LINE,
+    _custom:true
+  };
+  customVenues.push(venue);saveCustom();closeAddVenue();renderVenues();filt();
+  setTimeout(()=>{
+    const el=document.querySelector('[data-id="'+id+'"]');
+    if(el){el.style.outline='3px solid var(--yellow)';setTimeout(()=>{el.style.outline='';},2500);}
+  },150);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('av-overlay').addEventListener('click',function(e){if(e.target===this)closeAddVenue();});
+  document.getElementById('so-overlay').addEventListener('click',function(e){if(e.target===this)closeSendOrder();});
+});
+
+// ── EXPORT / RESET ─────────────────────────────────────────────────────────────
+function exportCSV(){
+  const rows=[['City','Venue','Status','Priority','Phone','Email','Instagram','Reached Out','Reply Date','Show Date','Fee Model','English Speaking','Notes']];
+  allV().forEach(v=>{
+    rows.push([v.city,v.name,SL[gv(v.id,'status','not-started')]||'',['','High','Medium','Low'][parseInt(gv(v.id,'priority','2'))]||'',v.phone||'',v.email||'',v.ig?'@'+v.ig:'',gv(v.id,'dateOut',''),gv(v.id,'dateReply',''),gv(v.id,'showDate',''),v.fee,v.eng?'Yes':'No',(gv(v.id,'notes','')||'').replace(/\n/g,' ')]);
+  });
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}));a.download='stevie_japan_tour.csv';a.click();
+}
+
+function clearAll(){
+  if(confirm('Reset all status, dates and notes? Custom venues will also be cleared.')){
+    S={};customVenues=[];saveState(S);saveCustom();renderVenues();filt();
+  }
+}
+
+renderVenues();
+</script>
+<div id="so-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,58,.88);z-index:1000;overflow-y:auto;padding:2rem 1rem">
+  <div style="max-width:760px;margin:0 auto;background:var(--darkblue);border:3px solid var(--blue);box-shadow:6px 6px 0 var(--black)">
+    <div style="background:var(--blue);padding:12px 18px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-family:var(--font);font-size:10px;color:var(--white);letter-spacing:.5px">&#9733; PRIORITY SEND ORDER</div>
+        <div style="font-family:var(--font);font-size:7px;color:rgba(255,255,255,.7);margin-top:4px">Venues to contact &#8212; sorted by date urgency then priority</div>
+      </div>
+      <button onclick="closeSendOrder()" style="font-family:var(--font);font-size:9px;background:var(--darkblue);color:var(--white);border:2px solid var(--white);padding:5px 10px;cursor:pointer;box-shadow:2px 2px 0 var(--black)">X CLOSE</button>
+    </div>
+    <div style="padding:16px 18px">
+      <div id="so-list"></div>
+      <div style="font-family:var(--font);font-size:7px;color:var(--gray);margin-top:14px;padding-top:10px;border-top:1px solid var(--darkgray);line-height:1.8">Mark as Reached Out after sending &#8212; date stamps automatically and venue drops off this list.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
